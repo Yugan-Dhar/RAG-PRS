@@ -155,49 +155,22 @@ class AssessmentOrchestrator:
         llm_result: Dict[str, Any],
         prohibition_details: Dict[str, Any] | None,
     ) -> str:
-        matched_preview = ", ".join(matched_concepts[:4]) if matched_concepts else "no key requirement concepts"
-        missing_preview = ", ".join(missing_concepts[:4]) if missing_concepts else "no uncovered concepts"
-        evidence_count = len(evidence_chunks)
         llm_summary = (llm_result.get("justification") or "").strip()
+        
+        if not llm_summary:
+            if final_status == "compliant":
+                llm_summary = "The documentation fully satisfies the baseline requirements."
+            elif final_status == "partial":
+                llm_summary = "The documentation demonstrates partial capability but contains critical implementation gaps."
+            elif final_status == "non_compliant":
+                llm_summary = "The product lacks demonstrable control coverage or exhibits prohibited behaviors."
+            else:
+                llm_summary = "Unable to verify compliance due to lack of evidence."
 
-        if final_status == "compliant":
-            base = (
-                f"Analysis confirms compliance. "
-                f"The product architecture securely implements {matched_preview}."
-            )
-            if prohibition_details and prohibition_details.get("violations") == []:
-                base += " Verification confirms the absence of prohibited features or insecure configurations."
-            return base
+        return llm_summary
 
-        if final_status == "partial":
-            base = (
-                f"Analysis indicates partial compliance. While the product successfully demonstrates capability for {matched_preview}, "
-                f"there is a critical gap regarding the implementation of {missing_preview}."
-            )
-            return base
 
-        if final_status == "non_compliant":
-            if prohibition_details and prohibition_details.get("violations"):
-                violations = ", ".join(prohibition_details["violations"][:4])
-                return (
-                    f"Analysis concludes non-compliance. The product exhibits prohibited behaviors or insecure implementations: {violations}."
-                )
-            base = (
-                f"Analysis concludes non-compliance due to a lack of demonstrable control coverage for {missing_preview}."
-            )
-            if matched_concepts:
-                base += f" Although mechanisms for {matched_preview} are present, they fail to meet the comprehensive security baseline required."
-            return base
 
-        if final_status == "evidence_not_found":
-            return (
-                "Unable to verify compliance. The provided documentation lacks the necessary technical depth or architectural evidence required to assess this control."
-            )
-
-        if final_status == "manual_review":
-            return llm_summary or "This requirement requires manual review."
-
-        return "Assessment completed."
 
     def _enforce_status_consistency(
         self,
@@ -304,9 +277,11 @@ class AssessmentOrchestrator:
         mandatory_concepts = self._mandatory_concepts(child, expected_capabilities)
         child["mandatory_concepts"] = mandatory_concepts
 
-        query = self._build_retrieval_query(child)
-        candidate_chunks = self.retriever.retrieve(query, top_k=20)
-        reranked = self.reranker.rerank(query, candidate_chunks, top_k=8) if candidate_chunks else []
+        semantic_query = f"{requirement_title} {requirement_text}".strip()
+        keyword_query = self._build_retrieval_query(child)
+        
+        candidate_chunks = self.retriever.retrieve(dense_query=semantic_query, sparse_query=keyword_query, top_k=20)
+        reranked = self.reranker.rerank(semantic_query, candidate_chunks, top_k=8) if candidate_chunks else []
         evidence_chunks = self._filter_requirement_echoes(reranked, requirement_text)
 
         semantic_score = self.tier1.compute_score(evidence_chunks)

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   UploadCloud, FileText, CheckCircle, AlertTriangle, XCircle, Search, 
   Settings, Home, Grid, Folder, PieChart as PieChartIcon, Clock, Users, Shield, 
-  Bell, ChevronRight, X, HelpCircle
+  Bell, ChevronRight, X, HelpCircle, ExternalLink
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 
@@ -58,6 +58,10 @@ export default function App() {
 
   const handleStartAnalysis = async () => {
     if (!file) {
+      if (report) {
+        setActiveTab('Reports');
+        return;
+      }
       alert("Please upload a document first.");
       return;
     }
@@ -263,8 +267,8 @@ export default function App() {
           
           <div className="text-xs font-semibold text-gray-500 mb-2 mt-6 px-3 tracking-wider">MANAGE</div>
           <SidebarItem icon={FileText} label="Documents" />
-          <SidebarItem icon={Folder} label="Projects" />
-          <SidebarItem icon={FileText} label="Reports" />
+          <SidebarItem icon={Folder} label="Reports" />
+          <SidebarItem icon={FileText} label="Analysis" />
           <SidebarItem icon={Clock} label="History" />
           
           <div className="text-xs font-semibold text-gray-500 mb-2 mt-6 px-3 tracking-wider">SETTINGS</div>
@@ -290,8 +294,8 @@ export default function App() {
           <div className="flex items-center h-full space-x-2">
             <TopNavItem icon={Home} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => setActiveTab('Dashboard')} />
             <TopNavItem icon={Grid} label="Standards" active={activeTab === 'Standards'} onClick={() => setActiveTab('Standards')} />
-            <TopNavItem icon={FileText} label="Reports" active={activeTab === 'Reports'} onClick={() => setActiveTab('Reports')} />
-            <TopNavItem icon={Folder} label="Projects" active={activeTab === 'Projects'} onClick={() => setActiveTab('Projects')} />
+            <TopNavItem icon={FileText} label="Analysis" active={activeTab === 'Reports'} onClick={() => setActiveTab('Reports')} />
+            <TopNavItem icon={Folder} label="Reports" active={activeTab === 'Projects'} onClick={() => setActiveTab('Projects')} />
             <TopNavItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => setActiveTab('Settings')} />
           </div>
           <div className="flex items-center space-x-4">
@@ -436,11 +440,17 @@ export default function App() {
             {/* Generate Button */}
             <button 
               onClick={handleStartAnalysis}
-              disabled={!selectedFramework || !file || loading}
+              disabled={loading || (!file && !report)}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-[#1e293b] disabled:text-gray-500 disabled:cursor-not-allowed text-white font-medium py-4 px-6 rounded-xl transition-all flex justify-center items-center group"
             >
               {loading ? (
                 <><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div> {statusText}</>
+              ) : (!file && report) ? (
+                <>
+                  <Search className="w-5 h-5 mr-2 text-blue-200 group-hover:text-white transition-colors" />
+                  View Previous Analysis
+                  <ChevronRight className="w-5 h-5 ml-auto opacity-50 group-hover:opacity-100 transition-opacity" />
+                </>
               ) : (
                 <>
                   <Search className="w-5 h-5 mr-2 text-blue-200 group-hover:text-white transition-colors" />
@@ -562,6 +572,69 @@ export default function App() {
               )}
             </div>
             </>
+            )}
+
+            {activeTab === 'Standards' && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="panel p-6">
+                  <h2 className="text-xl font-bold text-white mb-2">Cybersecurity Standards</h2>
+                  <p className="text-gray-400 mb-6">Explore the reference standards and guidelines used for the gap analysis.</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* ITSAR Router Card */}
+                    <div className="bg-[#0f172a] rounded-xl border border-[#1f2937] p-5 hover:border-blue-500/50 transition-colors">
+                      <div className="w-10 h-10 rounded bg-blue-500/10 flex items-center justify-center mb-4">
+                        <Shield className="text-blue-500 w-5 h-5" />
+                      </div>
+                      <h3 className="text-white font-semibold text-lg mb-2">ITSAR Router</h3>
+                      <p className="text-sm text-gray-400 mb-4 line-clamp-3">
+                        Indian Telecommunication Security Assurance Requirements for IP Routers. Defines mandatory security baseline and cryptographic controls.
+                      </p>
+                      <a href="/ITSAR_IP_Router.pdf" target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center">
+                        View PDF <ExternalLink className="w-3 h-3 ml-1" />
+                      </a>
+                    </div>
+                    
+                    {/* ITSAR LAN Card */}
+                    <div className="bg-[#0f172a] rounded-xl border border-[#1f2937] p-5 hover:border-blue-500/50 transition-colors">
+                      <div className="w-10 h-10 rounded bg-green-500/10 flex items-center justify-center mb-4">
+                        <Grid className="text-green-500 w-5 h-5" />
+                      </div>
+                      <h3 className="text-white font-semibold text-lg mb-2">ITSAR LAN Switch</h3>
+                      <p className="text-sm text-gray-400 mb-4 line-clamp-3">
+                        Security assurance requirements tailored specifically for enterprise and telecom LAN switching equipment.
+                      </p>
+                      <a href="/ITSAR_LAN_Switch.pdf" target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center">
+                        View PDF <ExternalLink className="w-3 h-3 ml-1" />
+                      </a>
+                    </div>
+
+                    {/* IEC 62443 Card */}
+                    <div className="bg-[#0f172a] rounded-xl border border-[#1f2937] p-5 hover:border-blue-500/50 transition-colors">
+                      <div className="w-10 h-10 rounded bg-purple-500/10 flex items-center justify-center mb-4">
+                        <FileText className="text-purple-500 w-5 h-5" />
+                      </div>
+                      <h3 className="text-white font-semibold text-lg mb-2">IEC 62443</h3>
+                      <p className="text-sm text-gray-400 mb-4 line-clamp-3">
+                        International series of standards that address cybersecurity for operational technology in automation and control systems.
+                      </p>
+                      <a href="#" className="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center">
+                        View Details <ExternalLink className="w-3 h-3 ml-1" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'Projects' && (
+              <div className="panel p-6 animate-fade-in flex flex-col items-center justify-center h-64">
+                <Folder className="w-12 h-12 text-gray-500 mb-4" />
+                <h3 className="text-lg font-medium text-white mb-2">Saved Reports</h3>
+                <p className="text-gray-400 text-center max-w-sm">
+                  Historical and saved gap analysis reports will appear here for download and review.
+                </p>
+              </div>
             )}
 
             {activeTab === 'Reports' && (

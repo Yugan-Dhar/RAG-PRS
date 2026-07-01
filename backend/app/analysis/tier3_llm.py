@@ -72,13 +72,26 @@ class Tier3LLM:
             f"REQUIREMENT TITLE: {requirement_title}\n"
             f"REQUIREMENT TEXT: {requirement_text}\n\n"
             f"EVIDENCE EXCERPTS:\n{context}\n\n"
+            "GUIDELINES FOR JUSTIFICATION:\n"
+            "- Write a concise explanation in 2-3 natural sentences.\n"
+            "- Start by describing what the requirement expects.\n"
+            "- Summarize only the capabilities explicitly supported by the evidence.\n"
+            "- Identify any required capability not demonstrated.\n"
+            "- Never infer unsupported functionality.\n"
+            "- Avoid generic phrases ('analysis indicates', 'the product is compliant').\n"
+            "- Do not repeat the verdict or confidence score.\n"
+            "- Vary your sentence structure naturally depending on the evidence. Use flexible wording like:\n"
+            "  * 'The requirement expects [X]. The documentation describes [Y], but does not explicitly demonstrate [Z].'\n"
+            "  * 'The documentation confirms [Y]. However, no explicit evidence was found for [Z].'\n"
+            "  * 'While the documentation covers [Y], additional evidence is needed to verify [Z].'\n"
+            "  * 'The documentation provides evidence of [Y].'\n\n"
             "Return exactly one valid JSON object with these keys:\n"
             "{\n"
             '  "verdict": "COMPLIANT" or "PARTIAL" or "NON-COMPLIANT",\n'
             '  "extracted_evidence": ["short direct evidence statements copied or paraphrased from excerpts"],\n'
             '  "matched_concepts": ["requirement concepts that are evidenced"],\n'
             '  "missing_concepts": ["requirement concepts that are not evidenced"],\n'
-            '  "justification": "2-4 sentence technical explanation of how the product meets or fails the requirement. Start directly with the technical facts and reasoning. Do not use generic opening phrases like \'Based on the available evidence, this requirement is considered...\'.",\n'
+            '  "justification": "Your 2-3 sentence explanation following the GUIDELINES FOR JUSTIFICATION.",\n'
             '  "recommendation": "single next action for compliance officer"\n'
             "}\n"
             "Do not include markdown or any extra text."

@@ -49,19 +49,15 @@ class HybridRetriever:
         
         return fused
 
-    def retrieve(self, query: str, top_k: int = 10, expand: bool = True) -> List[Dict[str, Any]]:
-        # 1. Expand query
-        queries = self.expander.expand(query) if expand else [query]
-        expanded_query = " ".join(queries) # Simple concatenation for BM25
-        
-        # 2. Dense retrieval
-        query_embedding = self.embedder.embed_query(query) # Usually better to embed original query for dense
+    def retrieve(self, dense_query: str, sparse_query: str, top_k: int = 10) -> List[Dict[str, Any]]:
+        # 1. Dense retrieval (Semantic search using natural language)
+        query_embedding = self.embedder.embed_query(dense_query)
         dense_results = self.dense.search(query_embedding, top_k=top_k*2)
         
-        # 3. Sparse retrieval
-        sparse_results = self.sparse.search(expanded_query, top_k=top_k*2)
+        # 2. Sparse retrieval (Keyword search using expanded terms)
+        sparse_results = self.sparse.search(sparse_query, top_k=top_k*2)
         
-        # 4. Fusion
+        # 3. Fusion
         fused_results = self.rrf_fusion(dense_results, sparse_results)
         
         return fused_results[:top_k]
