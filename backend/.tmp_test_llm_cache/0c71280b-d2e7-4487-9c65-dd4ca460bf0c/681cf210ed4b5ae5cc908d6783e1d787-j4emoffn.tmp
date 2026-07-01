@@ -1,0 +1,1 @@
+{"extracted_evidence": ["SSH is enabled."], "justification": "SSH-based management access is described in the supplied evidence.", "matched_concepts": ["ssh"], "missing_concepts": [], "recommendation": "Retain the cited evidence.", "verdict": "COMPLIANT", "verdict_bool": true}

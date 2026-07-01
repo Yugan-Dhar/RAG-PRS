@@ -1,0 +1,36 @@
+Cisco Integrated Services Routers (ISR 4000 Family) Security Target
+
+1. Introduction
+This document describes the security capabilities of the ISR 4000 series router. 
+The router is intended to operate as a conventional IP router in an enterprise environment.
+
+2. Management and Authentication
+The router supports mutual authentication of entities on management interfaces using X.509v3 certificates (ITSAR Table 1 compliant).
+Management traffic (OAM) is protected strictly using secure cryptographic controls prescribed in Table 1 (AES-GCM-256).
+The system supports Role Based Access Control (RBAC) with 3 predefined user roles: Admin, Auditor, and Operator. This applies to both console and API users.
+
+Local and remote access requires a combination of username, password, and an RSA token (two attributes).
+Direct login as root is limited to the system console only. Remote root login is strictly disabled.
+Accounts are assigned individually per user. Group accounts are not enabled.
+
+Passwords must be a minimum of 12 characters and include uppercase, lowercase, digits, and special characters. Passwords are salted and hashed using SHA-256.
+Interactive sessions timeout automatically after 10 minutes of inactivity.
+Password history is enforced (minimum 5 previous passwords remembered). Default passwords must be changed on first login.
+
+3. Software Security
+The router supports software package integrity validation via digital signature (RSA-4096).
+The system time is synchronized using NTPv4 with a secure communication channel.
+
+4. Banned Services
+The router has permanently disabled and removed the following services: FTP, TFTP, Telnet, rlogin, HTTP, SNMP v1/v2, SSHv1, CDP, and LLDP.
+
+5. Routing Security
+The router implements control plane policing to rate-limit control plane traffic.
+Routing loops are prevented using split horizon and hold down timers.
+BGP Prefix origin validation is supported via RPKI-RTR protocol and Validated ROA Payload (VRP).
+
+6. Web Interface
+The Web Management Interface is protected strictly using HTTPS with TLS 1.3 (ITSAR Table 1 compliant).
+
+7. Wi-Fi Access
+The Wi-Fi access point capabilities support WPA2-PSK with AES-128 and PMF (Protected Management Frames). It also supports WPA3. WPA is not supported.

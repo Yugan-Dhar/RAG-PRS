@@ -1,0 +1,116 @@
+{
+    "id": "ITSAR-ROUTER",
+    "name": "ITSAR IP Router Standard V2.0.0",
+    "standard_id": "ITSAR",
+    "description": "Indian Telecom Security Assurance Requirements for IP Routers",
+    "requirements": [
+        {
+            "req_id": "2.1.1",
+            "title": "Authentication for Product Management and Maintenance interfaces",
+            "category": "Access and Authorization",
+            "text": "IP Router shall support mutual authentication of entities on management interfaces. The authentication mechanism can rely on the management protocols used for the interface or other means. Secure cryptographic controls prescribed in Table 1 of the latest document “Indian Telecommunication Security Assurance Requirements (ITSAR) for Cryptographic Controls” shall only be used for IP Router management and maintenance."
+        },
+        {
+            "req_id": "2.1.2",
+            "title": "Management Traffic Protection",
+            "category": "Access and Authorization",
+            "text": "IP Router management traffic (information exchanged during interactions with OAM) shall be protected strictly using secure cryptographic controls prescribed in Table 1 of the latest document “Indian Telecommunication Security Assurance Requirements (ITSAR) for Cryptographic Controls” only."
+        },
+        {
+            "req_id": "2.1.3",
+            "title": "Role-Based access control policy",
+            "category": "Access and Authorization",
+            "text": "The IP Router shall support Role Based Access Control (RBAC). A role-based access control system shall use a set of controls which determines how users interact with domains and resources. The IP Router shall support RBAC with minimum of 3 user roles, in particular, for OAM privilege management for network product Management and Maintenance."
+        },
+        {
+            "req_id": "2.1.5",
+            "title": "Remote login restrictions for privileged users",
+            "category": "Access and Authorization",
+            "text": "Direct Login to IP Routers as root or equivalent highest privileged user shall be limited to the system console only. Root user shall not be allowed to login to IP Router remotely."
+        },
+        {
+            "req_id": "2.2.3",
+            "title": "Protection against brute force and dictionary attacks",
+            "category": "Authentication Attribute Management",
+            "text": "Protection against brute force and dictionary attacks that hinder authentication attribute guessing shall be implemented. Measures include timer delays, blocking an account after incorrect attempts, CAPTCHA, or password blacklists. Two or more measures shall be mandatorily supported."
+        },
+        {
+            "req_id": "2.2.4",
+            "title": "Enforce Strong Password",
+            "category": "Authentication Attribute Management",
+            "text": "IP Router shall only accept passwords that comply with the following complexity criteria: Absolute minimum length of 8 characters. Password shall mandatorily comprise all four categories: 1 uppercase, 1 lowercase, 1 digit, 1 special character."
+        },
+        {
+            "req_id": "2.2.5",
+            "title": "Inactive Session Timeout",
+            "category": "Authentication Attribute Management",
+            "text": "An OAM user interactive session shall be terminated automatically after a specified period of inactivity. Re-authentication of the OAM user shall be repeated following any period of inactivity lasting 15 minutes or longer."
+        },
+        {
+            "req_id": "2.3.1",
+            "title": "Secure Update",
+            "category": "Software Security",
+            "text": "Software package integrity shall be validated during the software update stage via cryptographic means, e.g., digital signature using Secure cryptographic controls."
+        },
+        {
+            "req_id": "2.3.6",
+            "title": "Unnecessary Service Removal",
+            "category": "Software Security",
+            "text": "IP Router shall not support following services: FTP, TFTP, Telnet, rlogin, RCP, RSH, HTTP, SNMP v1 and v2, SSHv1, Echo, Finger, BOOTP, CDP, LLDP."
+        },
+        {
+            "req_id": "2.5.2",
+            "title": "Audit Event Generation",
+            "category": "User Audit",
+            "text": "The IP Router shall log all security events with unique System References such as IP Address, MAC address, hostname, etc. It shall record Date, time, type of event, subject identity, and outcome. Must log incorrect login attempts, administrator access, account administration, configuration changes, reboot, and interface status changes."
+        },
+        {
+            "req_id": "2.6.4",
+            "title": "Protecting data and information – Confidential System Internal Data",
+            "category": "Data Protection",
+            "text": "When the IP Router is in normal operational mode there shall be no system function that reveals confidential system internal data (passwords, PINs, cryptographic keys) in the clear text to users and administrators."
+        },
+        {
+            "req_id": "2.6.7",
+            "title": "Protection against Data Exfiltration - Overt Channel",
+            "category": "Data Protection",
+            "text": "IP Router shall have mechanisms to prevent data exfiltration attacks. Establishment of outbound overt channels such as HTTPS, IM, P2P, Email shall be forbidden if they are auto-initiated by the IP Router."
+        },
+        {
+            "req_id": "2.8.1",
+            "title": "Network Level and application-level DDoS",
+            "category": "Attack Prevention Mechanisms",
+            "text": "IP Router shall have protection mechanisms against Network-level and Application-level Distributed Denial of Service (DDoS) attacks. Shall provide security measures to deal with overload situations."
+        },
+        {
+            "req_id": "3.1.6",
+            "title": "Avoidance of Routing Loops",
+            "category": "Routing Related Requirements",
+            "text": "IP Router shall implement routing loop prevention mechanisms such as split horizon, poison reverse, hold down timers etc."
+        },
+        {
+            "req_id": "3.1.10",
+            "title": "Protection against ARP Cache Poisoning Attacks",
+            "category": "Routing Related Requirements",
+            "text": "IP Router shall support mechanisms such as Dynamic ARP inspection, TARP, SEND, monitoring tools for ARP/NDP traffic and detect anomalies like rapidly changing IP-MAC address associations."
+        },
+        {
+            "req_id": "3.1.14",
+            "title": "Protection against BGP Hijacking",
+            "category": "Routing Related Requirements",
+            "text": "The IP Router shall support BGP Prefix origin validation to ensure that the origin AS of route is valid for the advertised routes. Shall support RPKI-RTR protocol."
+        },
+        {
+            "req_id": "3.1.15",
+            "title": "Routing Protocol Security",
+            "category": "Routing Related Requirements",
+            "text": "The IP Router shall support cryptographic authentication for interior and exterior routing protocols. Shall avoid options for vulnerable protocol versions (such as RIPv1, OSPF type 0/1 authentication, EIGRP with null text authentication)."
+        },
+        {
+            "req_id": "3.7.1",
+            "title": "Container breakout",
+            "category": "Container Related",
+            "text": "The virtualization layer shall provide capabilities to limit the impact on co-hosted containers caused by a rogue container escaping its isolation. The virtualization layer shall enforce the principle of ‘least privilege’."
+        }
+    ]
+}

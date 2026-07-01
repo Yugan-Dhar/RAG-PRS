@@ -1,0 +1,3734 @@
+{
+  "standard": {
+    "id": "ITSAR_ROUTER",
+    "name": "ITSAR IP Router",
+    "version": "2.0.0",
+    "document_number": "ITSAR201012512",
+    "date": "2025-12-01",
+    "issuer": "NCCS, Department of Telecommunications, India"
+  },
+  "router_types": [
+    "conventional",
+    "sdn",
+    "cloud_native",
+    "virtual",
+    "cloud_managed"
+  ],
+  "sections": [
+    {
+      "id": "2.1",
+      "title": "Access and Authorization",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.1.1",
+          "title": "Authentication for Product Management and Maintenance interfaces",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall support mutual authentication of entities on management interfaces. The authentication mechanism can rely on the management protocols used for the interface or other means. Secure cryptographic controls prescribed in Table 1 of the latest document 'Indian Telecommunication Security Assurance Requirements (ITSAR) for Cryptographic Controls' shall only be used for IP Router management and maintenance.",
+          "keywords": [
+            "mutual authentication",
+            "management interfaces",
+            "cryptographic controls"
+          ],
+          "cross_references": [
+            "ITSAR_CRYPTO:Table1"
+          ]
+        },
+        {
+          "id": "2.1.2",
+          "title": "Management Traffic Protection",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router management traffic (information exchanged during interactions with OAM) shall be protected strictly using secure cryptographic controls prescribed in Table 1 of the latest document 'Indian Telecommunication Security Assurance Requirements (ITSAR) for Cryptographic Controls' only.",
+          "keywords": [
+            "management traffic",
+            "OAM",
+            "protected",
+            "cryptographic controls"
+          ],
+          "cross_references": [
+            "ITSAR_CRYPTO:Table1"
+          ]
+        },
+        {
+          "id": "2.1.3",
+          "title": "Role-Based access control policy",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall support Role Based Access Control (RBAC). A role-based access control system shall use a set of controls which determines how users interact with domains and resources. The domains could be Fault Management (FM), Performance Management (PM), System Admin, etc. The RBAC system shall control how users or groups of users are allowed access to the various domains and what type of operation they can perform, i.e. the specific operation command or command group (e.g. View, Modify, Execute).",
+          "keywords": [
+            "Role Based Access Control",
+            "RBAC",
+            "user roles",
+            "OAM privilege management"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.3.4.6.2]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.1.3.a",
+              "text": "The IP Router shall support RBAC with minimum of 3 user roles, in particular, for OAM privilege management for network product Management and Maintenance, including authorization of the operation for configuration data and software via the network product console interface.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.1.3.b",
+              "text": "The RBAC shall be applicable to API users also.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.1.4",
+          "title": "User Authentication – Local/Remote",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The various user and machine accounts on a system shall be protected from misuse. To this end, an authentication attribute shall be used, which, when combined with the username, shall enable unambiguous authentication and identification of the authorized user. Authentication attributes include: Cryptographic keys, Token, Passwords.",
+          "keywords": [
+            "authentication attribute",
+            "unambiguous authentication",
+            "cryptographic keys",
+            "token",
+            "passwords"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.3.4.2.1]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.1.4.a",
+              "text": "Minimum two of the above Authentication attributes shall be mandatorily combined for protecting all the accounts from misuse. An exception to this requirement is local access and machine accounts where at least one authentication attribute shall be supported",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.1.5",
+          "title": "Remote login restrictions for privileged users",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Direct Login to IP Routers as root or equivalent highest privileged user shall be limited to the system console only. Root user shall not be allowed to login to IP Router remotely. This remote root user access restriction is also applicable to application software’s / tools such as TeamViewer, desktop sharing which provide remote access to the IP Router.",
+          "keywords": [
+            "root",
+            "highest privileged user",
+            "system console only",
+            "not be allowed to login to IP Router remotely"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.3.2.6]"
+          ]
+        },
+        {
+          "id": "2.1.6",
+          "title": "Authorization Policy",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The authorizations for accounts and applications shall be reduced to the minimum required for the tasks they have to perform. Authorizations to IP Router shall be restricted to a level in which a user can only access data and use functions that he needs in the course of his work.",
+          "keywords": [
+            "minimum required",
+            "restricted to a level"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.4.6.1]"
+          ]
+        },
+        {
+          "id": "2.1.7",
+          "title": "Unambiguous identification of the user & group accounts removal",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Users shall be identified unambiguously by the IP Router. IP Router shall support the assignment of individual accounts per user. IP Router shall not enable the use of group accounts or group credentials, or sharing of the same account between several users.",
+          "keywords": [
+            "identified unambiguously",
+            "individual accounts per user",
+            "not enable the use of group accounts"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.4.1.2]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.2",
+      "title": "Authentication Attribute Management",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.2.1",
+          "title": "Authentication Policy",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The usage of a system function without successful authentication, on the basis of the user identity and at least two authentication attributes shall be prevented. For machine accounts and local access one authentication attribute will be sufficient.",
+          "keywords": [
+            "successful authentication",
+            "two authentication attributes"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.3.4.1.1]"
+          ]
+        },
+        {
+          "id": "2.2.2",
+          "title": "Authentication Support – External",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If the IP Router supports external authentication mechanism such as AAA server, then the communication between IP Router and the external authentication entity shall be protected using the authentication and related service protocols built strictly using the Secure cryptographic controls prescribed in Table 1 of the latest document “ITSAR for Cryptographic Controls” only.",
+          "keywords": [
+            "external authentication",
+            "AAA server",
+            "cryptographic controls"
+          ],
+          "cross_references": [
+            "ITSAR_CRYPTO:Table1"
+          ]
+        },
+        {
+          "id": "2.2.3",
+          "title": "Protection against brute force and dictionary attacks",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Protection against brute force and dictionary attacks that hinder authentication attribute (i.e. password) guessing shall be implemented. In order to achieve higher security, two or more of the measures indicated above shall be mandatorily supported by IP Router: i) timer delay, ii) Blocking an account, iii) CAPTCHA, iv) password blacklist.",
+          "keywords": [
+            "Protection against brute force",
+            "dictionary attacks",
+            "timer delay",
+            "Blocking an account"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.3.4.3.3]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.2.3.i",
+              "text": "Using the timer delay (this delay could be the same or increased depending the\noperator's policy for each attempt) for each newly entered password input\nfollowing an incorrect entry (\"tar pit\").\nii)\nBlocking an account following a specified number of incorrect attempts. However,\nit has to be taken into account that this solution needs a process for unlocking as an\nattacker can force this to deactivate accounts and make them unusable.\niii)\nUsing CAPTCHA to prevent automated attempts (often used for Web applications).\niv)\nUsing a password blacklist to prevent vulnerable passwords.\nIn order to achieve higher security, two or more of the measures indicated above shall be\nmandatorily supported by IP Router.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.2.4",
+          "title": "Enforce Strong Password",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The configuration setting shall be such that IP Router shall only accept passwords that comply with the complexity criteria.",
+          "keywords": [
+            "passwords",
+            "complexity criteria"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.4.3.1]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.2.4.a",
+              "text": "Absolute minimum length of 8 characters. Password shall mandatorily comprise all the following four categories: uppercase, lowercase, digit, special character.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.2.4.i",
+              "text": "Absolute minimum length of 8 characters (shorter lengths shall be rejected\nby the IP Router). It shall not be possible to set this absolute minimum length to\na lower value by configuration.\nii) Password shall mandatorily comprise all the following four categories of\ncharacters:\n1) At least 1 uppercase character (A-Z)\n2) At least 1 lowercase character (a-z)\n3) At least 1 digit (0-9)\n4) At least 1 special character (e.g., @;!$.)",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.2.4.b",
+              "text": "The minimum length of characters in the passwords and the set of allowable special characters shall be configurable by the operator.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.2.4.c",
+              "text": "If a central system is used for user authentication password policy, then additional\nassurance shall be provided that the central system enforces the same password\ncomplexity rules as laid down for the local system in this sub-clause.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.2.4.d",
+              "text": "If a central system is not used for user authentication, the assurance on password\ncomplexity rules shall be performed on the IP Router.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.2.4.e",
+              "text": "When a user is changing a password or entering a new password, IP Router/central\nsystem shall check and ensure that it meets the password requirements. Above\nrequirements shall be applicable for all passwords used (e.g., application-level, OS-level,\netc.).",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.2.4.f",
+              "text": "Passwords shall not be stored in clear text in the system; passwords shall be salted and hashed.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.2.5",
+          "title": "Inactive Session Timeout",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "An OAM user interactive session shall be terminated automatically after a specified period of inactivity. It shall be possible to configure an inactivity time-out period.",
+          "keywords": [
+            "terminated automatically",
+            "inactivity time-out period"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.5.2]"
+          ]
+        },
+        {
+          "id": "2.2.6",
+          "title": "Password Changes",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Password change shall be enforced after initial login. IP Router shall enforce password expiry. Previously used passwords shall not be allowed up to a certain number (Password History) minimum 3.",
+          "keywords": [
+            "password expiry",
+            "Password History",
+            "minimum 3"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.4.3.2]",
+            "[Ref: CIS_Benchmarks_Password_Policy_Guide_v21.12]"
+          ]
+        },
+        {
+          "id": "2.2.7",
+          "title": "Protected Authentication feedback",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The Authentication attributes shall not be displayed in such a way that it could be seen and\nmisused by a casual local observer. Typically, the individual characters of the password are\nreplaced by a character such as \"*\".\nThis requirement shall be applicable for all authentication attributes used (e.g. application-\nlevel, OS-level, etc.). An exception to this requirement is machine accounts",
+          "keywords": [
+            "Protected Authentication feedback"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.3.4.3.4]"
+          ]
+        },
+        {
+          "id": "2.2.8",
+          "title": "Removal of predefined or default authentication attributes",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Predefined or default authentication attributes shall be deleted or disabled. Such authentication attributes shall be changed by automatically forcing a user to change it on first time login.",
+          "keywords": [
+            "Predefined or default authentication attributes",
+            "deleted or disabled"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 5.2.3.4.2.3]"
+          ]
+        },
+        {
+          "id": "2.2.9",
+          "title": "Logout Function",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall have a function that allows a signed-in user to logout at any time. All\nprocesses under the logged-in user ID shall be terminated on logout. IP Router shall be able to\ncontinue to operate without interactive sessions.\nOnly for debugging purposes, processes under a logged-in user ID may be allowed to continue\nto run after detaching the interactive session.",
+          "keywords": [
+            "Logout Function"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.5.1]"
+          ]
+        },
+        {
+          "id": "2.2.10",
+          "title": "Policy regarding consecutive failed login attempts",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) The maximum permissible number of consecutive failed user account login attempts shall\nbe configurable by the operator. The definition of the default value set at manufacturing time\nfor the maximum number of failed user account login attempts shall be less than or equal to\n8, typically 5. After the maximum permissible number of consecutive failed user account login\nattempts is exceeded by a user, there shall be a block delay in allowing the user to attempt\nlogin again. This block delay and the capability to set the period of the block delay, e.g., double\nthe delay, or 5 minutes delay, or 10 minutes delay, after each login failure should be\nconfigurable by the operator. The default value set at manufacturing time for this delay shall\nbe greater than or equal to 5 sec.\nb) If supported, infinite (permanent) locking of an account that has exceeded the maximum\npermissible number of consecutive failed user account login attempts shall also be possible\nvia configuration, with the exception of administrative accounts, which shall get only\ntemporarily locked.",
+          "keywords": [
+            "Policy regarding consecutive failed login attempts"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.4.5]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.2.10.a",
+              "text": "The maximum permissible number of consecutive failed user account login attempts shall\nbe configurable by the operator. The definition of the default value set at manufacturing time\nfor the maximum number of failed user account login attempts shall be less than or equal to\n8, typically 5. After the maximum permissible number of consecutive failed user account login\nattempts is exceeded by a user, there shall be a block delay in allowing the user to attempt\nlogin again. This block delay and the capability to set the period of the block delay, e.g., double\nthe delay, or 5 minutes delay, or 10 minutes delay, after each login failure should be\nconfigurable by the operator. The default value set at manufacturing time for this delay shall\nbe greater than or equal to 5 sec.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.2.10.b",
+              "text": "If supported, infinite (permanent) locking of an account that has exceeded the maximum\npermissible number of consecutive failed user account login attempts shall also be possible\nvia configuration, with the exception of administrative accounts, which shall get only\ntemporarily locked.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.2.11",
+          "title": "Suspend accounts on non-use",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "It shall be possible for the system to automatically suspend an account after ‘X’ days without\na valid login. Only the highest privilege account shall be exempted from this requirement.\nNote: X may be specified by operator. It can be implemented centrally also.",
+          "keywords": [
+            "Suspend accounts on non use"
+          ],
+          "cross_references": [
+            "[Ref: CIS Password Policy Guide]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.3",
+      "title": "Software Security",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.3.1",
+          "title": "Secure Update",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall support software package integrity validation via cryptographic means, e.g., digital signature using Secure cryptographic controls prescribed in Table 1.",
+          "keywords": [
+            "software package integrity validation",
+            "digital signature"
+          ],
+          "cross_references": [
+            "ITSAR_CRYPTO:Table1"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.3.1.a",
+              "text": "Software package integrity shall be validated during the software update stage.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.3.1.b",
+              "text": "Tampered software shall not be executed or installed if integrity check fails.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.3.1.c",
+              "text": "A security mechanism is required to guarantee that only authorized user can initiate and\ndeploy a software update and modify the list mentioned in (b) above.\nNote: Code signing (valid and not time expired) is also allowed as an option in (b) above.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.3.2",
+          "title": "Secure Upgrade",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) Software package integrity shall be validated during the software upgrade stage.\nb) IP Router shall support software package integrity validation via cryptographic means,\ne.g., digital signature using Secure cryptographic controls prescribed in Table 1 of the\nlatest document “ITSAR for Cryptographic Controls” only. To this end, the IP Router\nshall have a list of public keys or certificates of authorized software sources, and uses\nthe keys to verify that the software upgrade originated from only these sources.\nc) Tampered software shall not be executed or installed if integrity check fails.\nd) A security mechanism is required to guarantee that only authorized users can initiate\nand deploy a software upgrade and modify the list mentioned in (b) above.\nNote: Code signing (valid and not time expired) is also allowed as an option in (b) above.",
+          "keywords": [
+            "Secure Upgrade"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.3.5]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.3.2.a",
+              "text": "Software package integrity shall be validated during the software upgrade stage.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.3.2.b",
+              "text": "IP Router shall support software package integrity validation via cryptographic means,\ne.g., digital signature using Secure cryptographic controls prescribed in Table 1 of the\nlatest document “ITSAR for Cryptographic Controls” only. To this end, the IP Router\nshall have a list of public keys or certificates of authorized software sources, and uses\nthe keys to verify that the software upgrade originated from only these sources.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.3.2.c",
+              "text": "Tampered software shall not be executed or installed if integrity check fails.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.3.2.d",
+              "text": "A security mechanism is required to guarantee that only authorized users can initiate\nand deploy a software upgrade and modify the list mentioned in (b) above.\nNote: Code signing (valid and not time expired) is also allowed as an option in (b) above.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.3.3",
+          "title": "Source code security assurance",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "undertaking",
+          "is_prohibition": false,
+          "compliance_by_undertaking": true,
+          "text": "OEM shall follow best security practices including secure coding... Also, OEM shall submit the undertaking as below: Industry standard best practices of secure coding have been followed",
+          "keywords": [
+            "secure coding",
+            "undertaking"
+          ],
+          "cross_references": [
+            "[Ref : https://cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html ]",
+            "[Ref: https://owasp.org/www-project-top-ten/ ]",
+            "[Ref : https://owasp.org/www-project-api-security/ ]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.3.3.i",
+              "text": "OEM shall follow best security practices including secure coding for software development.\nSource code shall be made available either at Telecom Security Testing Laboratory (TSTL)\npremises or at the mutually agreed location for source code review by the designated TSTL.\nIt shall be supported by furnishing the Software Test Document (STD).\nii) Also, OEM shall submit the undertaking as below:\na. Industry standard best practices of secure coding have been followed during the entire\ndevelopment life cycle of the IP Router software which includes OEM developed code,\nthird party software and open-source code libraries used/embedded in the IP Router.\nb. IP Router software shall be free from Common Weakness Enumeration (CWE) top 25,\nOpen Worldwide Application Security Project (OWASP) top 10 security vulnerabilities\nand OWASP top 10 API Security vulnerabilities as on the date of latest release of\nproduct or three months prior to the date of offer of product for testing, whichever is\nlatest. For security weaknesses, vulnerabilities identified or discovered during the\ninterim period, OEM shall give mitigation plan.\nc. The binaries for IP Router and upgrades/updates thereafter generated from the source\ncode are free from all known security vulnerabilities stated in (ii) above.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.3.4",
+          "title": "Known Malware and backdoor Check",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "undertaking",
+          "is_prohibition": false,
+          "compliance_by_undertaking": true,
+          "text": "OEM shall submit an undertaking stating that IP Router is free from all known malware and backdoors.",
+          "keywords": [
+            "malware",
+            "backdoors",
+            "undertaking"
+          ]
+        },
+        {
+          "id": "2.3.5",
+          "title": "No unused software",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Software components or parts of software which are not needed for operation or functionality\nof the IP Router shall not be present/configured. Orphaned software components /packages\nshall not be present in IP Router. OEM shall provide the list of software that are necessary for\nIP Router’s operation. In addition, OEM shall furnish an undertaking as “IP Router does not\ncontain software that is not used in the functionality of IP Router.”",
+          "keywords": [
+            "No unused software"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.3.2.3]"
+          ]
+        },
+        {
+          "id": "2.3.6",
+          "title": "Unnecessary Service Removal",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": true,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall not support following services: a. FTP b. TFTP c. Telnet d. rlogin, RCP, RSH e. HTTP f. SNMP v1 and v2 g. SSHv1 h. TCP/UDP Small Servers i. Finger j. BOOTP server k. CDP, LLDP l. IP Identification Service m. PAD n. MOP",
+          "keywords": [
+            "ftp",
+            "tftp",
+            "telnet",
+            "http",
+            "snmpv1",
+            "snmpv2",
+            "sshv1",
+            "cdp",
+            "lldp"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.3.2.1]"
+          ]
+        },
+        {
+          "id": "2.3.7",
+          "title": "Restricting System Boot Source",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall boot only from the memory devices intended for this purpose.",
+          "keywords": [
+            "Restricting System Boot Source"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.3.3.2]"
+          ]
+        },
+        {
+          "id": "2.3.8",
+          "title": "Secure Time Synchronization",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall establish a secure communication channel strictly using Secure cryptographic controls... with NTP/PTP server. IP Router shall support NTPv4 or later version to ensure secure time synchronization.",
+          "keywords": [
+            "secure communication channel",
+            "NTP",
+            "PTP",
+            "NTPv4"
+          ],
+          "cross_references": [
+            "[Ref: RFC 5905]"
+          ]
+        },
+        {
+          "id": "2.3.9",
+          "title": "Restricted reachability of services",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall restrict the reachability of services so that they can only be reached on\ninterfaces meant for the purpose. On interfaces where services are active, the reachability\nshall be limited to legitimate communication peers. This limitation shall be realized on the IP\nRouter itself (without external measures e.g., firewall, at network side) according to the\nrequirement detailed in section 2.7.1 Traffic Filtering. Administrative services (e.g., SSH,\nHyper Text Transfer Protocol Secure (HTTPS), Remote Desktop Protocol (RDP)) shall be\nrestricted to interfaces in the management plane to support separation of management traffic\nfrom user traffic.",
+          "keywords": [
+            "Restricted reachability of services"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.3.2.2]"
+          ]
+        },
+        {
+          "id": "2.3.10",
+          "title": "Self-Testing",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router’s cryptographic module shall perform power-up self-tests and should perform\nconditional self- tests to ensure that the module is functioning properly. Power-up self-tests\nshall be performed when the cryptographic module is powered up during System\nbootup/restart.\nConditional self-tests should be performed when an applicable security function or operation\nis invoked (i.e. security functions for which self-tests are required). If a cryptographic module\nfails a self-test, the module shall enter an error state and output an error indicator via the\nstatus output interface. The cryptographic module shall not perform any cryptographic\noperations while in an error state.",
+          "keywords": [
+            "Self Testing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.4",
+      "title": "System Secure Execution Environment",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.4.1",
+          "title": "No unused functions",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": true,
+          "compliance_by_undertaking": false,
+          "text": "Unused functions i.e. the software and hardware functions which are not needed for operation or functionality of the IP Router shall be permanently deactivated.",
+          "keywords": [
+            "unused functions",
+            "permanently deactivated"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.3.2.4]"
+          ]
+        },
+        {
+          "id": "2.4.2",
+          "title": "No unsupported components",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "undertaking",
+          "is_prohibition": false,
+          "compliance_by_undertaking": true,
+          "text": "OEM to ensure that the IP Router shall not contain software and hardware components that are no longer supported... An undertaking in this regard shall be provided by OEM.",
+          "keywords": [
+            "unsupported components",
+            "end-of-life",
+            "undertaking"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.3.2.5]"
+          ]
+        },
+        {
+          "id": "2.4.3",
+          "title": "Avoidance of Unspecified   mode of Access",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall not contain any access mechanism which is unspecified or not declared. An\nundertaking shall be given by the OEM as follows:\nThe IP router does not contain any wireless, optical, magnetic or any other component that\nmay be used as a covert channel.",
+          "keywords": [
+            "Avoidance of Unspecified   mode of Access"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.5",
+      "title": "User Audit",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.5.1",
+          "title": "Audit trail storage and protection",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The security event log of IP Routers shall be access controlled (file access rights), so only privilege users shall have access to read the log files but shall not be allowed to delete the log files.",
+          "keywords": [
+            "security event log",
+            "access controlled",
+            "not be allowed to delete"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0. V.1.0.0 section 4.2.3.6.3]"
+          ]
+        },
+        {
+          "id": "2.5.2",
+          "title": "Audit Event Generation",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall log all security events with unique System References such as IP Address, MAC address, hostname, etc.",
+          "keywords": [
+            "log all security events"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.3.6.1]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.5.2.1",
+              "text": "Records any user’s incorrect login attempts to the IP router (Mandatory)",
+              "obligation": "SHALL",
+              "is_table_row": true
+            },
+            {
+              "id": "2.5.2.2",
+              "text": "Records any access attempts to accounts that have system privileges. (Mandatory)",
+              "obligation": "SHALL",
+              "is_table_row": true
+            },
+            {
+              "id": "2.5.2.3",
+              "text": "Records all account administration activity, i.e. configure, delete, copy, enable, and disable. (Mandatory)",
+              "obligation": "SHALL",
+              "is_table_row": true
+            }
+          ]
+        },
+        {
+          "id": "2.5.3",
+          "title": "Secure Log Export",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a. IP Router shall support forwarding of security event logging data to an external system\navailable by push or pull mechanism through diverse links.\nb. Log functions shall support secure uploading of log files to a central location or to a\nsystem external for the IP Router.\nc. IP Router shall be able to store the generated audit/log data locally. The memory for this\npurpose shall be dimensioned to cater for the continuous storage of two days of\naudit/log data. OEM shall submit justification document for sufficiency of local storage\nrequirement.\nd. Secure Log export shall comply with the secure cryptographic controls prescribed in\nTable 1 of the latest document “ITSAR for Cryptographic Controls” only.",
+          "keywords": [
+            "Secure Log Export"
+          ],
+          "cross_references": [
+            "[Reference: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.6.2]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.6",
+      "title": "Data Protection",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.6.1",
+          "title": "Cryptographic Based Secure Communication",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall communicate with the connected entities strictly using the secure\ncryptographic controls prescribed in Table 1 of the latest document “ITSAR for Cryptographic\nControls” only.\nOEM shall submit to TSTL, the list of the connected entities with IP Router and the method of\nsecure communication with each entity with details of interface, protocol stack implemented,\nconfiguration, detailed procedure of establishing communication with each entity and any\nother details required for verifying this requirement.",
+          "keywords": [
+            "Cryptographic Based Secure Communication"
+          ]
+        },
+        {
+          "id": "2.6.2",
+          "title": "Cryptographic Module Security Assurance",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "undertaking",
+          "is_prohibition": false,
+          "compliance_by_undertaking": true,
+          "text": "Cryptographic module embedded inside the IP Router... is designed and implemented in compliance with FIPS 140-2 or later... undertaking by the OEM in specified format along with self-certified test reports.",
+          "keywords": [
+            "FIPS 140-2",
+            "undertaking"
+          ]
+        },
+        {
+          "id": "2.6.3",
+          "title": "Cryptographic Algorithms implementation Security Assurance",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Cryptographic algorithm implemented inside the Crypto module of IP Router shall be in\ncompliance with the respective latest FIPS standards (for the specific crypto algorithm). Till\nfurther instructions, this clause will be considered ‘complied’ by submission of an undertaking\nby the OEM in specified format along with self-certified test reports.\nAn undertaking is to be submitted by the OEM mentioning that “Cryptographic algorithms\nimplemented inside the Crypto module of IP Router is in compliance with the respective latest\nFIPS standards (for the specific crypto algorithm embedded inside the IP Router).”",
+          "keywords": [
+            "Cryptographic Algorithms implementation Security Assurance"
+          ]
+        },
+        {
+          "id": "2.6.4",
+          "title": "Protecting data and information – Confidential System Internal Data",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) When the IP Router is in normal operational mode (i.e. not in maintenance mode) there\nshall be no system function that reveals confidential system internal data in the clear text to\nusers and administrators.\nSuch functions could be, for example, local or remote OAM CLI or GUI, logging messages,\nalarms, configuration file exports etc. Confidential system internal data contains\nauthentication data (i.e., PINs, cryptographic keys, passwords, cookies) as well as system\ninternal data that is not required for systems administration.\nb) Access to maintenance mode shall be restricted only to authorized privileged users.",
+          "keywords": [
+            "Protecting data and information   Confidential System Internal Data"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.33.117-17.1.0 V1.1.0. Section 4.2.3.2.2.]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.6.4.a",
+              "text": "When the IP Router is in normal operational mode (i.e. not in maintenance mode) there\nshall be no system function that reveals confidential system internal data in the clear text to\nusers and administrators.\nSuch functions could be, for example, local or remote OAM CLI or GUI, logging messages,\nalarms, configuration file exports etc. Confidential system internal data contains\nauthentication data (i.e., PINs, cryptographic keys, passwords, cookies) as well as system\ninternal data that is not required for systems administration.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.6.4.b",
+              "text": "Access to maintenance mode shall be restricted only to authorized privileged users.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.6.5",
+          "title": "Protecting data and information in storage",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a. For sensitive data (persistent or temporary) in storage, read access rights shall be\nrestricted. Sensitive files of IP Router that are needed for the functionality shall be\nprotected against manipulation strictly using the Secure cryptographic controls prescribed\nin Table 1 of the latest document “ITSAR for Cryptographic Controls” with appropriate non-\nrepudiation controls.\nb. In addition, the following rules apply for:",
+          "keywords": [
+            "Protecting data and information in storage"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.2.3]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.6.5.i",
+              "text": "Systems that need access to identification and authentication data in the\nclear/readable form e.g., in order to perform an activity/operation. Such systems shall\nnot store this data in the clear/readable form, but scramble or encrypt it by\nimplementation-specific means.\nii) Systems that do not need access to sensitive data (e.g., user passwords) in the clear.\nSuch systems shall hash this sensitive data strictly using the cryptographic controls\nprescribed in Table 1 of the latest document “ITSAR for Cryptographic Controls” only.\niii) Stored files in the IP Router shall be protected against manipulation strictly using\nSecure cryptographic controls prescribed in Table 1 of the latest document “ITSAR for\nCryptographic Controls” only.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.6.6",
+          "title": "Protection against Copy of Data",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall have protection against creating a copy of data in use / data in transit.\nProtective measure shall exist against use of available system functions / software residing in\nNetwork product to create copy of data for illegal transmission.  The software functions and\ncomponents in the IP Router for creation of data copy are to be disabled or sufficiently secured\nto prevent illegal copy of data.",
+          "keywords": [
+            "Protection against Copy of Data"
+          ]
+        },
+        {
+          "id": "2.6.7",
+          "title": "Protection against Data Exfiltration - Overt Channel",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) IP Router shall have mechanisms to prevent data exfiltration attacks for theft of data in\nuse and data in transit.\nb) Establishment of outbound overt channels such as, HTTPS, Instant Messaging (IM), Peer\nto Peer (P2P), Email etc. shall be forbidden if they are auto-initiated by / auto originated\nfrom the IP Router.\nc) Session logs shall be generated for establishment of any session initiated by either user or\nIP Router.",
+          "keywords": [
+            "Protection against Data Exfiltration   Overt Channel"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.6.7.a",
+              "text": "IP Router shall have mechanisms to prevent data exfiltration attacks for theft of data in\nuse and data in transit.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.6.7.b",
+              "text": "Establishment of outbound overt channels such as, HTTPS, Instant Messaging (IM), Peer\nto Peer (P2P), Email etc. shall be forbidden if they are auto-initiated by / auto originated\nfrom the IP Router.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.6.7.c",
+              "text": "Session logs shall be generated for establishment of any session initiated by either user or\nIP Router.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.6.8",
+          "title": "Protection against Data Exfiltration - Covert Channel",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) IP Router shall have mechanisms to prevent data exfiltration attacks for theft of data in\nuse and data in transit (within its boundary).\nb) Establishment of outbound covert channels and tunnels such as Domain Name System\n(DNS) Tunnel, HTTPS Tunnel, Internet Control Message Protocol (ICMP) Tunnel,\nTransport Layer Security (TLS), Secure Sockets Layer (SSL), SSH, Internet Protocol\nSecurity (IPSec), Virtual Private Network (VPN), Real-time Transfer Protocol (RTP)\nEncapsulation etc. shall be forbidden if they are auto-initiated by / auto-originated from\nthe IP Router.\nc) Session logs shall be generated for establishment of any session initiated by either user\nor IP Router.",
+          "keywords": [
+            "Protection against Data Exfiltration   Covert Channel"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.6.8.a",
+              "text": "IP Router shall have mechanisms to prevent data exfiltration attacks for theft of data in\nuse and data in transit (within its boundary).",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.6.8.b",
+              "text": "Establishment of outbound covert channels and tunnels such as Domain Name System\n(DNS) Tunnel, HTTPS Tunnel, Internet Control Message Protocol (ICMP) Tunnel,\nTransport Layer Security (TLS), Secure Sockets Layer (SSL), SSH, Internet Protocol\nSecurity (IPSec), Virtual Private Network (VPN), Real-time Transfer Protocol (RTP)\nEncapsulation etc. shall be forbidden if they are auto-initiated by / auto-originated from\nthe IP Router.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.6.8.c",
+              "text": "Session logs shall be generated for establishment of any session initiated by either user\nor IP Router.",
+              "obligation": "SHALL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.7",
+      "title": "Network Services",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.7.1",
+          "title": "Traffic Filtering – Network Level",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall provide a mechanism to filter incoming IP packets on any IP interface.\n(Refer to RFC 3871). In particular, the IP Router shall provide a mechanism:",
+          "keywords": [
+            "Traffic Filtering   Network Level"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.7.1.a",
+              "text": "To filter incoming IP packets on any IP interface at Network Layer and Transport Layer\nof the stack ISO/OSI.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.7.1.b",
+              "text": "To allow specified actions to be taken when a filter rule matches. In particular at least\nthe following actions shall be supported:\ni.\nDiscard/Drop: the matching message is discarded; no subsequent rules are\napplied and no answer is sent back.\nii.\nAccept: the matching message is accepted.\niii.\nAccount: the matching message is accounted for i.e. a counter for the rule is\nincremented. This action shall be combined with the previous ones. This feature\nis useful to monitor traffic before its blocking.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.7.1.c",
+              "text": "To enable/disable for each rule the logging for Dropped packets, i.e. details on\nmessages matching the rule for troubleshooting.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.7.1.d",
+              "text": "To filter based on the value(s) of any portion of the protocol header.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.7.1.e",
+              "text": "To reset the accounting.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.7.1.f",
+              "text": "IP router shall provide a mechanism to disable/enable each defined rule.\n[Ref:  1. TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.2.6.2.1\n2. RFC 3871 - Operational Security Requirements for Large Internet Service Provider\n(ISP) IP Network Infrastructure]",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.7.2",
+          "title": "Traffic Separation",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall support the physical or logical separation of traffic belonging to different\nnetwork domains. For example, OAM traffic and control plane traffic belong to different\nnetwork domains. Refer to RFC 3871 for further information.\n2.  RFC 3871 - Operational Security Requirements for Large Internet Service Provider\n(ISP) IP Network Infrastructure]",
+          "keywords": [
+            "Traffic Separation"
+          ],
+          "cross_references": [
+            "[Ref: 1. TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 section 4.3.5.1]"
+          ]
+        },
+        {
+          "id": "2.7.3",
+          "title": "Traffic Protection –Anti-Spoofing",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Systems shall not process IP packets if their source address is not reachable via the incoming\ninterface. Implementation example: Use of \"Reverse Path Filter\" (RPF) provides this function.",
+          "keywords": [
+            "Traffic Protection  Anti Spoofing"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.3.1.1]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.8",
+      "title": "Attack Prevention Mechanisms",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.8.1",
+          "title": "Network Level and application-level DDoS",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall have protection mechanisms against Network-level and Application-level\nDistributed Denial of Service (DDoS) attacks\nIP Router shall provide security measures to deal with overload situations which may occur\nas a result of a denial-of-service attack or during periods of increased traffic. In particular,\npartial or complete impairment of system availability shall be avoided. Potential protective\nmeasures may include:",
+          "keywords": [
+            "Network Level and application level DDoS"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.3.1]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.8.1.a",
+              "text": "Restricting available RAM per application",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.8.1.b",
+              "text": "Restricting maximum sessions for a Web/Database application",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.8.1.c",
+              "text": "Defining the maximum size of a dataset",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.8.1.d",
+              "text": "Restricting Central Processing Unit (CPU) resources per process",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.8.1.e",
+              "text": "Prioritizing processes",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.8.1.f",
+              "text": "Limiting amount or size of transactions of a user or from an IP address in a specific time\nrange.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.8.1.g",
+              "text": "Limiting amount or size of transactions to an IP address/Port Address in a specific time\nrange",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.8.2",
+          "title": "Excessive Overload Protection",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall act in a predictable way if an overload situation cannot be prevented. IP Router\nshall be built in this way that it can react on an overload situation in a controlled way.\nHowever, it is possible that a situation happens where the security measures are no longer\nsufficient. In such case it shall be ensured that the IP Router cannot reach an undefined and\nthus potentially insecure state. In an extreme case this means that a controlled system\nshutdown is preferable to uncontrolled failure of the security functions and thus loss of system\nprotection.\nThe OEM shall provide a technical description of the IP Router Over Load Control mechanisms\n(especially whether these mechanisms rely on cooperation of other network elements).",
+          "keywords": [
+            "Excessive Overload Protection"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.2.3.3.3]"
+          ]
+        },
+        {
+          "id": "2.8.3",
+          "title": "Filtering IP Options",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP packets with unnecessary options or extension headers shall not be processed by IP Router.\nIP options and extension headers (e.g. source routing) are only required in exceptional cases.\nSo, all packets with enabled IP options or extension headers shall be filtered by the IP Router.",
+          "keywords": [
+            "Filtering IP Options",
+            "IP"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.2.4.1.1.3]"
+          ]
+        },
+        {
+          "id": "2.8.4",
+          "title": "Interface Robustness Requirements",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall not be affected in its availability or robustness by incoming packets, from\nother network elements, that are manipulated or differing the norm. This means that\nappropriate packets shall be detected as invalid and be discarded. The process shall not be\naffecting the performance of IP Router. This robustness shall be just as effective for a great\nmass of invalid packets as for individual or a small number of packets.\nExamples of such packets are:\na. Mass-produced TCP packets with a set Synchronize (SYN) flag to produce half-open\nTCP connections (SYN flooding attack).\nb. Packets with the same IP sender address and IP recipient address (Land attack).\nc. Mass-produced ICMP packets with the broadcast address of a network as target\naddress (Smurf attack).\nd. Fragmented IP packets with overlapping offset fields (Teardrop attack).\ne. ICMP packets that are larger than the maximum permitted size (65,535 Bytes) of IP\nversion 4 (IPv4) packets (Ping-of-death attack).\nf. Uncorrelated reply packets (i.e. packets which cannot be correlated to any request).",
+          "keywords": [
+            "Interface Robustness Requirements"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 section 4.2.6.2.2]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.9",
+      "title": "Vulnerability Testing Requirements",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.9.1",
+          "title": "Fuzzing – Network and Application Level",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "It shall be ensured that externally reachable services of IP Router are reasonably robust when\nreceiving unexpected input\nNote: Vendor is expected to provide the list of protocols supported by the IP Router",
+          "keywords": [
+            "Fuzzing   Network and Application Level"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.4.4]"
+          ]
+        },
+        {
+          "id": "2.9.2",
+          "title": "Port Scanning",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "It shall be ensured that on all network interfaces of IP Router, only documented ports on the\ntransport layer respond to requests from outside the system.",
+          "keywords": [
+            "Port Scanning"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.4.2]"
+          ]
+        },
+        {
+          "id": "2.9.3",
+          "title": "Vulnerability Scanning",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The purpose of vulnerability scanning is to ensure that there no known vulnerabilities (or that\nrelevant vulnerabilities are identified and remediation plans in place to mitigate them) on IP\nRouter, both in the OS and in the applications installed, that can be detected by means of\nautomatic testing tools via the Internet Protocol enabled network interfaces.\nThe vulnerabilities found during the Vulnerability Scanning/Assessment process shall be\nremediated as below. For other than critical vulnerabilities, OEM shall provide a\nremediation plan.\nSr. No.\nCVSS Score\nSeverity\nRemediation\n1\n9.0 - 10.0\nCritical\nTo be patched immediately\n2\n7.0 - 8.9\nHigh\nTo be patched within a month\n3\n4.0 - 6.9\nMedium\nTo be patched within three months\n4\n0.1 - 3.9\nLow\nTo be patched within an year\nZero-day vulnerabilities shall be remediated immediately or as soon as possible.\n[Ref: 1. TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 section 4.4.3\n2. https://nvd.nist.gov/vuln-metrics/cvss\n3. GSMA NG 133 Cloud Infrastructure Reference Architecture]",
+          "keywords": [
+            "Vulnerability Scanning"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.10",
+      "title": "Operating System",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.10.1",
+          "title": "Growing Content Handling",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) Growing or dynamic content shall not influence system functions of IP Router.\nb) A file system that reaches its maximum capacity shall lead to an event getting logged with\nappropriate message parameters and shall not stop IP Router from operating properly.\nTherefore, countermeasures shall be taken to ensure that this scenario is avoided. The\ncountermeasures are usage of dedicated file systems, separated from main system functions,\nor quotas, or at least a file system monitoring.",
+          "keywords": [
+            "Growing Content Handling"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.4.1.1.1]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.10.1.a",
+              "text": "Growing or dynamic content shall not influence system functions of IP Router.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.10.1.b",
+              "text": "A file system that reaches its maximum capacity shall lead to an event getting logged with\nappropriate message parameters and shall not stop IP Router from operating properly.\nTherefore, countermeasures shall be taken to ensure that this scenario is avoided. The\ncountermeasures are usage of dedicated file systems, separated from main system functions,\nor quotas, or at least a file system monitoring.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.10.2",
+          "title": "Handling of ICMP",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Processing of ICMPv4 and ICMPv6 packets which are not required for operation shall be\ndisabled on the IP Router. In particular, there are certain types of ICMP4 and ICMPv6 that are\nnot used in most networks, but represent a risk.\nICMP message types which on receipt lead to responses or to configuration changes are not\nmentioned in this requirement, but they may be necessary to support relevant and specified\nnetworking features. Those must be documented.\nCertain ICMP types are generally permitted and do not need to be specifically documented.\nThe IP Router shall not send certain ICMP types by default, but it may support the option to\nenable utilization of these types (e.g. for debugging). This is marked as \"Optional\" in below\ntable.\nType (IPv4) Type (IPv6) Description\nSend\nRespond to\n0\n128\nEcho Reply\nOptional (i.e. as\nautomatic reply to\n\"Echo Request\")\nN/A\n3\n1\nDestination Unreachable Permitted\nN/A\n8\n129\nEcho Request\nPermitted\nOptional\n11\n3\nTime Exceeded\nOptional\nN/A\n12\n4\nParameter Problem\nPermitted\nN/A\nN/A\n2\nPacket Too Big\nPermitted\nN/A\nN/A\n135\nNeighbour Solicitation\nPermitted\nPermitted\nN/A\n136\nNeighbour Advertisement Permitted\nN/A\nThe IP Router shall not respond to, or process (i.e. do changes to configuration), under any\ncircumstances, certain ICMP message types as marked in below table.\nType\n(IPv4)\nType\n(IPv6)\nDescription\nSend\nRespond to\nProcess (i.e., do\nchanges to\nconfiguration)\n5\n137\nRedirect\nN/A\nN/A\nNot Permitted\n13\nN/A\nTimestamp\nN/A\nNot\nPermitted\nN/A\n14\nN/A\nTimestamp\nReply\nNot Permitted\n(i.e., as automatic\nreply to\n\"Timestamp\")\nN/A\nN/A\nN/A\n133\nRouter\nSolicitation\nN/A\nPermitted\nPermitted\nN/A\n134\nRouter\nAdvertisement\nN/A\nN/A\nPermitted",
+          "keywords": [
+            "Handling of ICMP",
+            "ICMP"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. Section 4.2.4.1.1.2]"
+          ]
+        },
+        {
+          "id": "2.10.3",
+          "title": "Authenticated Privilege Escalation only",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall not support privilege escalation method in interactive sessions (both CLI and\nGUI) which allows a user to gain administrator/root privileges from another user account\nwithout re-authentication.",
+          "keywords": [
+            "Authenticated Privilege Escalation only"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.4.1.2.1]"
+          ]
+        },
+        {
+          "id": "2.10.4",
+          "title": "System account identification",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Each system user account in IP Router shall have a unique User ID (UID) with appropriate\nnon-repudiation controls.",
+          "keywords": [
+            "System account identification"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.4.2.2]"
+          ]
+        },
+        {
+          "id": "2.10.5",
+          "title": "OS Hardening - Minimized kernel network functions",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "OEM shall submit the process for OS Hardening undertaken to justify that the OS is sufficiently\nhardened and Kernel based applications / functions not needed for the operation of the\nNetwork product are deactivated.\nOEM to provide information on steps taken in this regard. In particular, the following ones\nshall be disabled by default:",
+          "keywords": [
+            "OS Hardening   Minimized kernel network functions",
+            "OS"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section - 4.3.3.1.2]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "2.10.5.a",
+              "text": "Proxy Address Resolution Protocol (ARP) (to prevent resource exhaustion\nattack and man-in-the-middle attacks)",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.10.5.b",
+              "text": "Directed broadcast (to prevent attacks like Smurf, Denial of Service etc.)",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.10.5.c",
+              "text": "IPv4 Multicast handling. In particular, all packets with IP source or destination\naddress\nbelonging\nto\nthe\nmulticast\nIP\nranges\n(224.0.0.0\nthrough\n239.255.255.255) shall be discarded by default and multicast route caching and\nforwarding shall be disabled to prevent Smurf and Fraggle attacks. A\nconfiguration option shall be available to enable the IPv4 multicast handling if\nrequired.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "2.10.5.d",
+              "text": "Gratuitous ARP messages (to prevent ARP Cache Poisoning attacks)",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "2.10.6",
+          "title": "No automatic launch of removable media",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall not automatically launch any application when a removable media device such\nas Compact Disk (CD), Digital Versatile Disk (DVD), Universal Serial Bus (USB)-Sticks or USB-\nStorage drive is connected. If the operating system supports an automatic launch, it shall be\ndeactivated unless it is required to support availability requirements.",
+          "keywords": [
+            "No automatic launch of removable media"
+          ],
+          "cross_references": [
+            "[Ref [3]: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section - 4.3.3.1.3]"
+          ]
+        },
+        {
+          "id": "2.10.7",
+          "title": "Protection from buffer overflows",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall support mechanisms for buffer overflow protection. Documentation which\ndescribes these buffer overflow mechanisms and also how to check that they have been\nenabled and/or implemented shall be provided by OEM.",
+          "keywords": [
+            "Protection from buffer overflows"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section - 4.3.3.1.5]"
+          ]
+        },
+        {
+          "id": "2.10.8",
+          "title": "External file system mount restrictions",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If normal users are allowed to mount external file systems (attached locally or via the\nnetwork), OS-level restrictions shall be set properly in IP Router in order to prevent privilege\nescalation or extended access permissions due to the contents of the mounted file systems.\nOS-level restrictions shall apply to normal users against mount / use of removable media\ndevices (e.g., USB drive, CD ROM etc.) for data transfer.",
+          "keywords": [
+            "External file system mount restrictions"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section - 4.3.3.1.6]"
+          ]
+        },
+        {
+          "id": "2.10.9",
+          "title": "File-system Authorization privileges",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall be designed to ensure that only users that are authorized to modify files, data,\ndirectories, or file systems have the necessary privileges to do so.",
+          "keywords": [
+            "File system Authorization privileges"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section - 4.3.2.7]"
+          ]
+        },
+        {
+          "id": "2.10.10",
+          "title": "SYN Flood Prevention",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall support a mechanism to prevent Syn Flood attacks. This feature shall be\nenabled by default.\n2.10.11Restrictions on running Scripts / Batch-processes\nScheduled tasks for carrying out the activities such as taking the backups, monitoring disk\nspace and system maintenance activities shall be executed by the privileged user such as\nadministrator only. Similarly, IP Router shall have feature to restrict Scripts / Batch processes\n/ Macros usage among various users. It shall be possible to administratively configure\nscheduled tasks usage i.e. cron-Job usage (permit / deny) among various users like Normal\nusers, privileged users.\n2.10.12Restrictions on Soft-Restart\nIP Router shall restrict software-based system restart options usage among various users. The\nsoftware reset / restart either through command or use of key-combinations like\nCTRL+ALT+DEL is not available to normal users for prevention of unintended / malicious\ntrigger of system reset / restart.",
+          "keywords": [
+            "SYN Flood Prevention",
+            "SYN"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section - 4.3.3.1.4]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.11",
+      "title": "Web Servers",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.11.1",
+          "title": "HTTPS",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [
+            "web_interface"
+          ],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The communication between Web client and Web server shall be protected strictly using the Secure cryptographic controls prescribed in Table1.",
+          "keywords": [
+            "HTTPS",
+            "Web client and Web server",
+            "protected strictly"
+          ],
+          "cross_references": [
+            "ITSAR_CRYPTO:Table1"
+          ]
+        },
+        {
+          "id": "2.11.2",
+          "title": "Webserver logging",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Access to the webserver (both successful as well as failed attempts) shall be logged by IP\nRouter. The web server log shall contain the following information:\n1) Access timestamp\n2) Source (IP address)\n3) Account (if known)\n4) Attempted login name (if the associated account does not exist)\n5) Relevant fields in http request. The URL should be included whenever possible.\n6) Status code of web server response",
+          "keywords": [
+            "Webserver logging"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.2.5.2.1]"
+          ]
+        },
+        {
+          "id": "2.11.3",
+          "title": "HTTP input validation",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router Web Server shall have a mechanism in place to ensure that web application\ninputs are not vulnerable to command injection or cross-site scripting attacks. The IP Router\nWeb Server shall validate, filter, escape, and encode user-controllable input before it is placed\nin output that is used as a web page that is served to other users.",
+          "keywords": [
+            "HTTP input validation",
+            "HTTP"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.2.5.4]"
+          ]
+        },
+        {
+          "id": "2.11.4",
+          "title": "No system privileges",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "No web server processes shall run with system privileges. This is best achieved if the web\nserver runs under an account that has minimum privileges. If a process is started by a user\nwith system privileges, execution shall be transferred to a different user without system\nprivileges after the start.",
+          "keywords": [
+            "No system privileges"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.2]"
+          ]
+        },
+        {
+          "id": "2.11.5",
+          "title": "No unused HTTP methods",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "HTTP methods that are not required for IP Router operation shall be deactivated.",
+          "keywords": [
+            "No unused HTTP methods",
+            "HTTP"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0 section 4.3.4.3]"
+          ]
+        },
+        {
+          "id": "2.11.6",
+          "title": "No unused add-ons",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "All optional add-ons and components of the web server shall be deactivated if they are not\nrequired for IP Router operation. In particular, Common Gateway Interface (CGI) or other\nscripting components, Server Side Includes (SSI), and Web based Distributed Authoring and\nVersioning (WebDAV) shall be deactivated if they are not required.",
+          "keywords": [
+            "No unused add ons"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.4]"
+          ]
+        },
+        {
+          "id": "2.11.7",
+          "title": "No compiler, interpreter, or shell via CGI or other server- side scripting",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If CGI (Common Gateway Interface) or other scripting technology is used, the CGI directory -\nor other corresponding scripting directory - shall not include compilers or interpreters.",
+          "keywords": [
+            "No compiler",
+            "interpreter",
+            "or shell via CGI or other server  side scripting",
+            "CGI"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.5]"
+          ]
+        },
+        {
+          "id": "2.11.8",
+          "title": "No CGI or other scripting for uploads",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If CGI or other scripting technology is used, the associated CGI/script directory shall not be\nused for uploads.",
+          "keywords": [
+            "No CGI or other scripting for uploads",
+            "CGI"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.6]"
+          ]
+        },
+        {
+          "id": "2.11.9",
+          "title": "No execution of system commands with SSI",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If Server Side Includes (SSI) is active, the execution of system commands shall be deactivated.",
+          "keywords": [
+            "No execution of system commands with SSI",
+            "SSI"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.7]"
+          ]
+        },
+        {
+          "id": "2.11.10",
+          "title": "Access rights for web server configuration",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Access rights for IP Router web server configuration files shall only be granted to the owner\nof the web server process or to a user with system privileges. Implementation example: Delete\n\"read\" and \"write\" access rights for \"others.\" Only grant \"write\" access to the user who\nconfigures the web server.",
+          "keywords": [
+            "Access rights for web server configuration"
+          ],
+          "cross_references": [
+            "[Reference: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0 section 4.3.4.8]"
+          ]
+        },
+        {
+          "id": "2.11.11",
+          "title": "No default content",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Default content (examples, help files, documentation, aliases) that is provided with the\nstandard installation of the IP Router web server shall be removed.",
+          "keywords": [
+            "No default content"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.9]"
+          ]
+        },
+        {
+          "id": "2.11.12",
+          "title": "No directory listings",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Directory listings (indexing) / \"Directory browsing\" shall be deactivated.",
+          "keywords": [
+            "No directory listings"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.10]"
+          ]
+        },
+        {
+          "id": "2.11.13",
+          "title": "Web server information in HTTP headers",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The HTTP header shall not include information on the version of the IP Router web server and\nthe modules/add-ons used.",
+          "keywords": [
+            "Web server information in HTTP headers",
+            "HTTP"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.11]"
+          ]
+        },
+        {
+          "id": "2.11.14",
+          "title": "Web server information in error pages",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "User-defined error pages shall not include version information about the IP Router web server\nand the modules/add-ons used. Error messages shall not include internal information such as\ninternal\nserver names, error codes, etc. Default error pages of the IP Router web server shall be\nreplaced by error pages defined by the OEM",
+          "keywords": [
+            "Web server information in error pages"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.12]"
+          ]
+        },
+        {
+          "id": "2.11.15",
+          "title": "Minimized file type mappings",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "File type- or script-mappings that are not required for IP Router operation shall be deleted,\ne.g. php, phtml, js, sh, csh, bin, exe, pl, vbe, vbs.",
+          "keywords": [
+            "Minimized file type mappings"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.13]"
+          ]
+        },
+        {
+          "id": "2.11.16",
+          "title": "Restricted file access",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Restrictive access rights shall be assigned to all files which are directly or indirectly (e.g. via\nlinks or in virtual directories) in the IP Router web server's document directory. In particular,\nthe IP Router web server shall not be able to access files which are not meant to be delivered.\n2.11.17HTTP User sessions\nTo protect user sessions the IP Router web server shall support the following session ID and\nsession cookie requirements:\ni.\nThe session ID shall uniquely identify the user and distinguish the session from all\nother active sessions.\nii.\nThe session ID shall be unpredictable.\niii.\nThe session ID shall not contain sensitive information in clear text (e.g. account\nnumber, social security, etc.).\niv.\nIn addition to the Session Idle Timeout the IP Router Web server shall terminate\nautomatically sessions after a configurable maximum lifetime. This maximum lifetime\ndefines the maximum session span. When the maximum lifetime expires, the session\nshall be closed, the session ID shall be deleted and the user shall be forced to\n(re)authenticate in the web application and to establish a new session. The default\nvalue for this maximum lifetime shall be set to 8 hours.\nv.\nSession IDs shall be regenerated for each new session (e.g. each time a user log in)\nvi.\nThe session ID shall not be reused or renewed in subsequent sessions\nvii.\nThe IP Router shall not use persistent cookies to manage sessions but only session\ncookies. This means that neither the \"expire\" nor the \"max-age\" attribute shall be set\nin the cookies.\nviii.\nWhere session cookies are used the attribute 'Http Only' shall be set to true\nix.\nWhere session cookies are used the 'domain' attribute shall be set to ensure that the\ncookie can only be sent to the specified domain.\nx.\nWhere session cookies are used the 'path' attribute shall be set to ensure that cookie\ncan only be sent to the specified directory or sub-directory.\nxi.\nThe IP Router shall not accept session identifiers from GET/POST variables.\nxii.\nThe IP Router shall be configured to only accept server generate session IDs.",
+          "keywords": [
+            "Restricted file access"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0 section 4.3.4.14]",
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.2.5.3]"
+          ]
+        },
+        {
+          "id": "2.11.18",
+          "title": "Execute rights exclusive for CGI/Scripting directory",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If CGI or other scripting technology is used, only the CGI/Scripting directory shall be\nconfigured with execute rights. Other directories used or meant for web content shall not have\nexecute rights.",
+          "keywords": [
+            "Execute rights exclusive for CGI",
+            "Scripting directory",
+            "CGI"
+          ],
+          "cross_references": [
+            "[Ref: TSDSI STD T1.3GPP 33.117-17.2.0 V.1.0.0. section 4.3.4.15]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2.12",
+      "title": "Other Security Requirements",
+      "chapter": "CSR",
+      "requirements": [
+        {
+          "id": "2.12.1",
+          "title": "Remote Diagnostic Procedure – Verification",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If the IP Router is providing Remote access for troubleshooting purposes/alarm\nmaintenance then it shall be allowed only for authorized users, other than the root user.\nAll activities performed by the remote user are to be logged by the IP Router with the following\nparameters:\na. User id\nb. Time stamp\nc. Interface type\nd. Event type (e.g., CRITICAL, MAJOR, MINOR)\ne. Command/activity performed\nf. Result type (e.g., SUCCESS, FAILURE).\ng. IP Address of remote machine",
+          "keywords": [
+            "Remote Diagnostic Procedure   Verification"
+          ],
+          "cross_references": [
+            "[Ref: GSMA NG 133: GSM Association Non-confidential Official Document NG.133 –]"
+          ]
+        },
+        {
+          "id": "2.12.2",
+          "title": "No System Password Recovery",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "In the event of system password reset, the entire configuration of the IP Router shall be\nirretrievably deleted.\nNo provision shall exist for password recovery.",
+          "keywords": [
+            "No System Password Recovery"
+          ]
+        },
+        {
+          "id": "2.12.3",
+          "title": "Secure System Software Revocation",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Once the IP Router software image is legally updated/upgraded with New Software Image,\nit shall normally not be possible to roll back to a previous software image. In case roll back is\nessential, it shall be done only by the administrator with appropriate non-repudiation\ncontrols.\nIP Router shall support a well-established control mechanism for rolling back to previous\nsoftware image.",
+          "keywords": [
+            "Secure System Software Revocation"
+          ]
+        },
+        {
+          "id": "2.12.4",
+          "title": "Software Integrity Check – Installation",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall validate the software package integrity before the installation stage strictly\nusing the Secure cryptographic controls prescribed in Table 1 of the latest document “ITSAR\nfor Cryptographic Controls” only.\nTampered software shall not be executed or installed if integrity check fails.",
+          "keywords": [
+            "Software Integrity Check   Installation"
+          ],
+          "cross_references": [
+            "[Ref: TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.3.5]"
+          ]
+        },
+        {
+          "id": "2.12.5",
+          "title": "Software Integrity Check – Boot",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall verify the integrity of a software component by comparing the result of a\nmeasurement of the component, typically a standard cryptographic hash generated strictly\nusing the Secure cryptographic controls prescribed in Table 1 of the latest document “ITSAR\nfor Cryptographic Controls” to the expected reference value.",
+          "keywords": [
+            "Software Integrity Check   Boot"
+          ]
+        },
+        {
+          "id": "2.12.6",
+          "title": "Unused Physical and Logical Interfaces Disabling",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall support the mechanism to verify both the physical and logical interfaces exist\nin the product. Physical and logical accessible interfaces (except console interface) which are\nnot under use shall be disabled so that they remain inactive even in the event of reboot.\nNote: List of the default used Physical/Logical Interfaces/Ports as given by the OEM shall\nmatch the list of Physical/Logical Interfaces/Ports that are necessary for the operation of the\nIP Router.",
+          "keywords": [
+            "Unused Physical and Logical Interfaces Disabling"
+          ]
+        },
+        {
+          "id": "2.12.7",
+          "title": "Predefined accounts shall be deleted or disabled",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Predefined or default user accounts (other than Admin/Root) in IP Router shall be deleted or\ndisabled.",
+          "keywords": [
+            "Predefined accounts shall be deleted or disabled"
+          ],
+          "cross_references": [
+            "[Ref TEC 64498:2024/TSDSI STD T1.3GPP 33.117 17.2.0 V1.2.0 Section 4.2.3.4.2.2]"
+          ]
+        },
+        {
+          "id": "2.12.8",
+          "title": "Security Algorithm Modification",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "When IP Router is establishing session/ communication channel with any other Network\nelement, or while communication in the progress, IP Router shall have protection against a\ndowngrade attack/bidding down attack for the use of a weaker algorithm.",
+          "keywords": [
+            "Security Algorithm Modification"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.1",
+      "title": "Routing Related Requirements",
+      "chapter": "SSR",
+      "requirements": [
+        {
+          "id": "3.1.1",
+          "title": "Control Plane Traffic",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "To prevent such issues, IP Router shall implement control plane policing mechanisms to monitor, filter, and rate-limit control plane traffic, thereby ensuring the stability and security of the network.",
+          "keywords": [
+            "control plane policing",
+            "rate-limit control plane traffic"
+          ]
+        },
+        {
+          "id": "3.1.2",
+          "title": "NAPT (Network Address Port Translation) services support",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [
+            "napt"
+          ],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If IP Router supports NAPT services, it shall have protection mechanism against possible attacks such as NAT Traversal attacks, Pin hole attacks and NAT Slipstreaming Etc.",
+          "keywords": [
+            "NAPT",
+            "NAT Traversal attacks",
+            "NAT Slipstreaming"
+          ]
+        },
+        {
+          "id": "3.1.3",
+          "title": "Access Banners",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall provide the requirement of banner displayed prior to the establishment\ndialogue for a session. Before establishing a user session, IP Router shall display an advisory\nwarning message regarding unauthorized use of IP Router",
+          "keywords": [
+            "Access Banners"
+          ]
+        },
+        {
+          "id": "3.1.4",
+          "title": "Inter –VLAN Routing support",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall not allow Inter –VLAN routing functionality by default. It shall be enabled only\nthrough permitted configuration by administrator.",
+          "keywords": [
+            "Inter  VLAN Routing support",
+            "VLAN"
+          ]
+        },
+        {
+          "id": "3.1.5",
+          "title": "Routing updates security",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "For Inter AS routing updates, facility shall exist in IP Router for administrative accept /reject\nrouting updates to prevent Routing table poisoning attacks.",
+          "keywords": [
+            "Routing updates security"
+          ]
+        },
+        {
+          "id": "3.1.6",
+          "title": "Avoidance of Routing Loops",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "IP Router shall implement routing loop prevention mechanisms such as split horizon, poison reverse, hold down timers etc.",
+          "keywords": [
+            "routing loop prevention",
+            "split horizon",
+            "poison reverse",
+            "hold down timers"
+          ]
+        },
+        {
+          "id": "3.1.7",
+          "title": "Avoidance of Layer 2 Loops",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If the Router support layer 2 forwarding/interface, then the router shall support STP\nsecurity mechanisms, including BPDU guard, root guard, and loop guard, to mitigate STP\nattacks such as rogue bridge insertion.",
+          "keywords": [
+            "Avoidance of Layer 2 Loops"
+          ],
+          "cross_references": [
+            "[Reference: IEEE 802.1D, IEEE 802.1Q & IEEE 802.1w]"
+          ]
+        },
+        {
+          "id": "3.1.8",
+          "title": "Traffic Shaping and Rate Limiting",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall provide traffic shaping and rate-limiting capabilities to manage\nbandwidth allocation on a per-port, per-VLAN, per VRF, or per-traffic-class basis.\n•\nCustomizable rate-limiting policies shall prevent individual devices or applications\nfrom consuming excessive traffic.\n•\nAdministrators shall have the ability to configure traffic shaping rules that\nprioritize critical traffic over less important network activity.",
+          "keywords": [
+            "Traffic Shaping and Rate Limiting"
+          ],
+          "cross_references": [
+            "[Reference: https://www.rfc-editor.org/info/rfc2698   & rfc8325]"
+          ]
+        },
+        {
+          "id": "3.1.9",
+          "title": "Multicast Listener Discovery (MLD) Security",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall include MLD snooping for IPv6 multicast traffic and IGMP snooping for\nIPV4 allowing only valid hosts to join multicast groups. It shall also support MLD filtering\nto block unauthorized or excessive multicast traffic from congesting the network.",
+          "keywords": [
+            "Multicast Listener Discovery",
+            "Security",
+            "MLD"
+          ],
+          "cross_references": [
+            "[Reference: https://www.rfc-editor.org/info/rfc4541 & section 2.1.2]"
+          ]
+        },
+        {
+          "id": "3.1.10",
+          "title": "Protection against ARP Cache Poisoning Attacks",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "“IP Router shall support mechanisms such as Dynamic ARP inspection, TARP, SEND,\nmonitoring tools for ARP/NDP traffic and detect anomalies like rapidly changing IP-MAC\naddress associations, indicating potential ARP/NDP poisoning attempts, packet filtering\netc. to ensure that only legitimate ARP/NDP packets to be processed and forwarded.\n3.1.11DHCP Snooping Security with Detailed Event Logging\nThe IP Router shall log all DHCP snooping events, including valid and invalid DHCP\nresponses, unauthorized DHCP servers, and suspicious activities like DHCP starvation\nattempts. Logs shall capture the MAC address, IP address, and interface associated with\neach DHCP event as applicable.\n3.1.12SNMP Trap/Info and Syslog for Security Violations\nThe IP Router shall support SNMP traps/info and syslog for real-time notifications of\nsecurity violations, including unauthorized access and configuration changes. SNMP\nmessages must be sent over SNMPv3 with encryption, and Syslog messages must utilize a\nsecure channel. Additionally, the IP Router shall allow for customized security alert\nthresholds to prioritize critical events",
+          "keywords": [
+            "Protection against ARP Cache Poisoning Attacks",
+            "ARP"
+          ],
+          "cross_references": [
+            "[Ref: https://www.rfc-editor.org/info/rfc7513]",
+            "[Reference: https://www.rfc-editor.org/info/rfc5590]"
+          ]
+        },
+        {
+          "id": "3.1.13",
+          "title": "Protection against Routing Table Poisoning Attacks",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall support mechanisms to detect and mitigate Routing Table Poisoning\nattacks. It shall ensure routing stability by rejecting invalid routing updates and maintaining\naccurate routing information. The IP Router shall support route filtering and policy-based\nrouting to control the acceptance of routing updates. Additionally, the IP Router shall provide\nthe capability to restrict routing information propagation on User Network Interfaces (UNI).\n3.1.14Protection against BGP Hijacking\nThe IP Router shall support BGP Prefix origin validation to ensure that the origin AS of route\nis valid for the advertised routes. The IP Router shall maintain an Origin Validation database\nconsisting of static and dynamic entries (VRP or Validated ROA Payload) for the purposes of\ndetermining the origin validation state of received BGP routes. The IP Router shall support\nthe RPKI-RTR protocol over TCP/IPv4 or TCP/IPv6 to learn Dynamic VRP entries. The\ncommunication between the IP Router and the validator cache shall be protected as per the\nrequirements specified in RFC 8210.",
+          "keywords": [
+            "Protection against Routing Table Poisoning Attacks"
+          ],
+          "cross_references": [
+            "[Ref RFC 8210, RFC 6480]"
+          ]
+        },
+        {
+          "id": "3.1.15",
+          "title": "Routing Protocol Security",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The IP Router shall support cryptographic authentication for interior and exterior routing\nprotocols, in accordance with Table 1 of the latest “Cryptographic Controls for Indian Telecom\nSecurity Assurance Requirements (ITSAR)” document. The IP Router shall also support\npassive interfaces to prevent the transmission of routing protocol updates on designated\ninterfaces. Additionally, the IP Router shall avoid the options for vulnerable protocol versions\n(such as RIPv1, OSPF type 0/type 1 authentication, EIGRP with null/plain text authentication\nor any similar scenario.)\nNote: Use of MD5 is allowed only if the latest RFC of the protocol does not support any other\ncryptographic method permitted by the latest ITSAR for Cryptographic Control.",
+          "keywords": [
+            "Routing Protocol Security"
+          ],
+          "cross_references": [
+            "[Ref: https://www.rfc-editor.org/info/rfc7416]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.2",
+      "title": "Api Related",
+      "chapter": "SSR",
+      "requirements": [
+        {
+          "id": "3.2.1",
+          "title": "The client and authorization servers shall mutually authenticate",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "APIs shall only allow themselves to be accessed by authorized users. One solution for\nauthorizing access is the use of OAuth2.0 with access token. The client shall authenticate the\nresource server and vice versa.\n[Ref:  1) ETSI GS NFV-SEC 022 V2.7.1 Section 4.3   2) ENISA NFV Security in 5G - Challenges\nand Best Practices (Feb 2022), BP-T23, BP-P1]\n3.2.2Authentication of the Request Originator\nBefore accepting the token as valid, the resource server shall authenticate the originator of\nthe request as the legitimate owner of the token. The token shall bound to the subject through\nthe subject Identifier, which shall ensure that the token has been provided for this consumer.",
+          "keywords": [
+            "The client and authorization servers shall mutually authenticate"
+          ],
+          "cross_references": [
+            "[Ref: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]"
+          ]
+        },
+        {
+          "id": "3.2.3",
+          "title": "Requirements for client credentials",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) The client credentials shall be stored in a secure and tamper-resistant location or\nstored encrypted with the key protected in a tamper-resistant location.\nb) The client credentials shall not be included in the source code and software packages.\nc) The client credentials shall be installed in the client in a secure way, eliminating any\npossibility of gaining access to these credentials during installation.\nd) The client credentials shall be possible for the authorization server to revoke the client\ncredentials.\n[Reference: 1) ETSI GS NFV-SEC 022 V2.7.1 Section 4.3 2) ENISA NFV Security in 5G -\nChallenges and Best Practices (February 2022), BP-T23]\n3.2.4Access Token shall be signed\nThe access token shall be signed to detect manipulation of the token or production of fake\ntokens. Access tokens shall be secured with digital signatures or Message Authentication\nCodes (MAC) based on JSON Web Signature (JWS) or equivalent. It shall be possible to encrypt\nthe content of the access token.\n3.2.5Format of Access Token\nThe access token shall be defined in a standard format (such as SAML or JWT or equivalent).\n3.2.6Access tokens shall have limited lifetimes\nThe access token shall include a claim for the expiration time (expiration).\n3.2.7Access tokens shall be restricted to a particular number of operations\nThere shall be a restriction on the number of operations that an access token can perform in\norder to mitigate the replay attack by a malicious client.\n3.2.8Access token shall be bound to the intended resource server.\nThe access token shall include a claim for the device ID of the Service Producer (audience). By\nusing token binding, a client can enforce the use of a specified external authentication\nmechanism with the token.\n3.2.9Tokens shall be bound to the client ID\nThe access token shall include a claim for the device ID of the Service Consumer (subject)\nwhich is the \"Client ID.\"\n3.2.10Token Revocation\nToken Revocation shall be possible. Unbound tokens shall not be used under any\ncircumstance. The authorization server shall provide a mechanism for token revocation. If\nnot, the lifetime of the Access token shall be kept very short, or the access token shall be single\nuse. If a scheme to bind access tokens to the underlying transport layer relies on non-standard\nextensions, and those extensions are not available, the system shall fail securely, preventing a\nbid-down attack.",
+          "keywords": [
+            "Requirements for client credentials"
+          ],
+          "cross_references": [
+            "[Ref: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]",
+            "[Reference: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]",
+            "[Ref: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]",
+            "[Ref: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]",
+            "[Ref: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]",
+            "[Ref: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]",
+            "[Ref: ETSI GS NFV-SEC 022 V2.7.1 Section 4.3]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.2.3.a",
+              "text": "The client credentials shall be stored in a secure and tamper-resistant location or\nstored encrypted with the key protected in a tamper-resistant location.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.2.3.b",
+              "text": "The client credentials shall not be included in the source code and software packages.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.2.3.c",
+              "text": "The client credentials shall be installed in the client in a secure way, eliminating any\npossibility of gaining access to these credentials during installation.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.2.3.d",
+              "text": "The client credentials shall be possible for the authorization server to revoke the client\ncredentials.\n[Reference: 1) ETSI GS NFV-SEC 022 V2.7.1 Section 4.3 2) ENISA NFV Security in 5G -\nChallenges and Best Practices (February 2022), BP-T23]\n3.2.4Access Token shall be signed\nThe access token shall be signed to detect manipulation of the token or production of fake\ntokens. Access tokens shall be secured with digital signatures or Message Authentication\nCodes (MAC) based on JSON Web Signature (JWS) or equivalent. It shall be possible to encrypt\nthe content of the access token.\n3.2.5Format of Access Token\nThe access token shall be defined in a standard format (such as SAML or JWT or equivalent).\n3.2.6Access tokens shall have limited lifetimes\nThe access token shall include a claim for the expiration time (expiration).\n3.2.7Access tokens shall be restricted to a particular number of operations\nThere shall be a restriction on the number of operations that an access token can perform in\norder to mitigate the replay attack by a malicious client.\n3.2.8Access token shall be bound to the intended resource server.\nThe access token shall include a claim for the device ID of the Service Producer (audience). By\nusing token binding, a client can enforce the use of a specified external authentication\nmechanism with the token.\n3.2.9Tokens shall be bound to the client ID\nThe access token shall include a claim for the device ID of the Service Consumer (subject)\nwhich is the \"Client ID.\"\n3.2.10Token Revocation\nToken Revocation shall be possible. Unbound tokens shall not be used under any\ncircumstance. The authorization server shall provide a mechanism for token revocation. If\nnot, the lifetime of the Access token shall be kept very short, or the access token shall be single\nuse. If a scheme to bind access tokens to the underlying transport layer relies on non-standard\nextensions, and those extensions are not available, the system shall fail securely, preventing a\nbid-down attack.",
+              "obligation": "SHALL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.3",
+      "title": "Sdn Related (Applicable For Sdn Supported Routers)",
+      "chapter": "SSR",
+      "requirements": [
+        {
+          "id": "3.3.1",
+          "title": "Mutual authentication within SDN",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "There must be mutual authentication between the controller and the switching/routing\nentities in SDN.",
+          "keywords": [
+            "Mutual authentication within SDN",
+            "SDN"
+          ],
+          "cross_references": [
+            "[Ref: ETSI GS NFV SEC 001 V1.1.1 (2014-10) clause 6.1.3.1.1]"
+          ]
+        },
+        {
+          "id": "3.3.2",
+          "title": "Centralized Log Auditing",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "All the SDN elements shall submit security events (e.g. authentication, authorization and\naccounting, login attempts, administration functions and configurations etc) as defined in Log\ntable in Ch 2.5.2 to a centralized platform, which shall monitor and analyses in real time the\nmessages for possible attempts at intrusion.\nNote: The parameters/features that are required to be configured/enabled for successful\ntesting are to be made available in the system/DUT in fulfillment of this clause.\n3.3.3SDN controller and associated SDN communications\nAn SDN controller shall always communicate with its associated SDN resources using the\nSecure cryptographic controls prescribed in Table1 of the latest document “Cryptographic\nControls For Indian Telecom Security Assurance Requirements (ITSAR)” only.\n3.3.4Prevent attacks via forwarding plane\nThere shall be mechanisms to prevent attacks mounted via the Forwarding Plane against SDN\nswitches and controllers.  OEMs shall submit the list of measures taken to prevent\nreconnaissance attacks, DoS and resource exhaustion attacks and vulnerability exploits.",
+          "keywords": [
+            "Centralized Log Auditing"
+          ],
+          "cross_references": [
+            "[Reference: ENISA NFV Security in 5G - Challenges and Best Practices (Feb 2022), BP-T17]",
+            "[Reference: ETSI GS NFV-EVE 005 Section 6.1, REC#1]",
+            "[Reference: ETSI GS NFV-EVE 005 Section 6.2, REC#1]"
+          ]
+        },
+        {
+          "id": "3.3.5",
+          "title": "Prevent attacks via control network",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) There shall be mechanisms to mitigate attacks from the control network. TLS 1.2 or\nhigher shall be used to protect integrity.\nb) There shall be High-Availability (HA) controller architecture.\nc) The configuration of secure and authenticated administrator access to controllers shall\nbe enabled.\nd) Role-Based Access Control policies shall be implemented for controller administrators.",
+          "keywords": [
+            "Prevent attacks via control network"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-EVE 005 Section 6.2, REC#2]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.3.5.a",
+              "text": "There shall be mechanisms to mitigate attacks from the control network. TLS 1.2 or\nhigher shall be used to protect integrity.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.5.b",
+              "text": "There shall be High-Availability (HA) controller architecture.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.5.c",
+              "text": "The configuration of secure and authenticated administrator access to controllers shall\nbe enabled.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.5.d",
+              "text": "Role-Based Access Control policies shall be implemented for controller administrators.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.3.6",
+          "title": "Prevent attacks via SDN controller's Application Control Interface",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) There shall be mechanisms to mitigate attacks via the SDN Controller's Application\nControl Interface such as TLS 1.2 or higher shall be used to secure northbound\ncommunications and secure controller management.\nb) The SDN systems shall be configured to validate flows in network device tables against\ncontroller policy.\n3.3.7Prevent attacks via virtualized environment\nThere shall be mechanisms to mitigate attacks against controllers and switches via the\nVirtualized environment. OEMs shall submit the list of measures taken to prevent such\nattacks.\n3.3.8Northbound Applications\na) Northbound applications, including the orchestrators, shall not be assigned admin level\naccess to the controllers.\nb) The identity of northbound applications shall be confirmed through certificates.\n3.3.9SDN security management\na) The controls below shall be applied if message bus technology for communication\nbetween SDN elements is used.\ni)\nA strong mechanism to authenticate the integrity of messages must be deployed\nbetween the ‘publisher’ and ‘producer’ over the message bus.\nii) No messages shall be accepted or processed by the message broker or ‘consumer’\nsystems from unknown, ‘fake’ or unauthenticated users.\niii) The communications shall be secured using TLS 1.2 and above security or certificates\nwhere supported (e.g. Kafka).\niv) The message bus shall be monitored for any unauthenticated messages or ‘fake’ or\ndefault usernames and a security alarm raised for investigation.\nb) The security functionality shall be deployed that identifies potential attacks on any SDN\nelements. Any security functionality shall provide automated alarms and the ability to\nchange the network or element configuration to mitigate the attack.\nc) A high availability architecture shall be implemented for key SDN components (e.g. SDN\nControllers) to ensure operational service is maintained. The design shall include\nprimary and secondary IP links with, where possible, diverse routing to allow for single\npoint of network failure.\nd) Any changes to network, service and virtual environments shall be restricted to the\norchestrator. The SDN Controller and the VNFM/CNFM and VIM/CISM shall have\nadditional controls applied to them to restrict such access for normal operation.\nRestricting the SDN Controller and the VNFM/CNFM and VIM/CISM will prevent the\napplication of rules and changes that may break policy and rules during deployment of\nservice templates.\ne) The orchestration layer and SDN must be architected so that SDN networks and NFV\nenvironments are not operationally dependent on the orchestration or MANO layer to\nmaintain operating services under circumstances that may render the orchestration\nplatform unavailable.",
+          "keywords": [
+            "Prevent attacks via SDN controller's Application Control Interface",
+            "SDN"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-EVE 005 Section 6.2, REC#3]",
+            "[Reference: ETSI GS NFV-EVE 005 Section 6.2, REC#4]",
+            "[Reference: ENISA NFV Security in 5G - Challenges and Best Practices (Feb 2022), BP-T22]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.3.6.a",
+              "text": "The controls below shall be applied if message bus technology for communication\nbetween SDN elements is used.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.6.b",
+              "text": "The security functionality shall be deployed that identifies potential attacks on any SDN\nelements. Any security functionality shall provide automated alarms and the ability to\nchange the network or element configuration to mitigate the attack.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.6.i",
+              "text": "A strong mechanism to authenticate the integrity of messages must be deployed\nbetween the ‘publisher’ and ‘producer’ over the message bus.\nii) No messages shall be accepted or processed by the message broker or ‘consumer’\nsystems from unknown, ‘fake’ or unauthenticated users.\niii) The communications shall be secured using TLS 1.2 and above security or certificates\nwhere supported (e.g. Kafka).\niv) The message bus shall be monitored for any unauthenticated messages or ‘fake’ or\ndefault usernames and a security alarm raised for investigation.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.6.c",
+              "text": "A high availability architecture shall be implemented for key SDN components (e.g. SDN\nControllers) to ensure operational service is maintained. The design shall include\nprimary and secondary IP links with, where possible, diverse routing to allow for single\npoint of network failure.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.6.d",
+              "text": "Any changes to network, service and virtual environments shall be restricted to the\norchestrator. The SDN Controller and the VNFM/CNFM and VIM/CISM shall have\nadditional controls applied to them to restrict such access for normal operation.\nRestricting the SDN Controller and the VNFM/CNFM and VIM/CISM will prevent the\napplication of rules and changes that may break policy and rules during deployment of\nservice templates.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.3.6.e",
+              "text": "The orchestration layer and SDN must be architected so that SDN networks and NFV\nenvironments are not operationally dependent on the orchestration or MANO layer to\nmaintain operating services under circumstances that may render the orchestration\nplatform unavailable.",
+              "obligation": "SHALL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.4",
+      "title": "Mano/Orchestrator Related",
+      "chapter": "SSR",
+      "requirements": []
+    },
+    {
+      "id": "3.5",
+      "title": "Vnf_Cnf Related",
+      "chapter": "SSR",
+      "requirements": []
+    },
+    {
+      "id": "3.6",
+      "title": "Virtual Machine Related",
+      "chapter": "SSR",
+      "requirements": []
+    },
+    {
+      "id": "3.7",
+      "title": "Container Related",
+      "chapter": "SSR",
+      "requirements": []
+    },
+    {
+      "id": "3.8",
+      "title": "Nfv Infrastructure (Platform) Related",
+      "chapter": "SSR",
+      "requirements": [
+        {
+          "id": "3.8.1",
+          "title": "CPU Pinning",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "When a VM instance is created, the vCPUs are, by default, not assigned to a particular host\nCPU. Certain workloads require real-time or near real-time behavior viz., uninterrupted\naccess to their cores. For such workloads, CPU pinning shall be possible to bind an instance’s\nvCPUs to a particular host’ cores or SMT threads.\nNote:  It is possible for OEM to demonstrate this clause with an example of CPU pinning.",
+          "keywords": [
+            "CPU Pinning",
+            "CPU"
+          ],
+          "cross_references": [
+            "[Reference: GSMA NG.133 - Cloud Infrastructure Reference Architecture V 1.0, Section 2.3.2]"
+          ]
+        },
+        {
+          "id": "3.8.2",
+          "title": "Workload Placement",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Affinity Rule: It specifies workloads that shall be hosted on the same computer node.\nNon-Affinity Rule: It specifies workloads that shall not be hosted on the same computer node.\nIt shall be possible to segregate workloads based on server groups (affinity and non-affinity\ngroups)\nNote:  It should be possible for OEM to demonstrate this clause with examples",
+          "keywords": [
+            "Workload Placement"
+          ],
+          "cross_references": [
+            "[Reference: GSMA NG.133 - Cloud Infrastructure Reference Architecture]"
+          ]
+        },
+        {
+          "id": "3.8.3",
+          "title": "SR-IOV and DPDK Considerations",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Acceleration techniques like DPDK, SR-IOV usually bypasses security protections. Measures\nshall be taken to ensure security when these technologies are employed to accelerate network\npacket processing.\nNote: OEM shall give the list of measures which shall be verified",
+          "keywords": [
+            "SR IOV and DPDK Considerations",
+            "SR",
+            "IOV",
+            "DPDK"
+          ]
+        },
+        {
+          "id": "3.8.4",
+          "title": "Hardware-Based Root of Trust (HBRT)",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) The host system shall include an HBRT or Trusted Platform Module (TPM) as Initial\nRoot of Trust. The HBRT shall be based on hardware-based TPM or equivalent\nhardware root of trust (e.g., Secure Element including TPM functionalities, HSM\nincluding TPM functionalities).\nb) The host system HBRT shall be able to provide isolated instances of the HBRT\ncapabilities for individual workloads.\nc) The host system HBRT shall include a hardware-based compute engine to be used by\nthe workloads for cryptographic and security functionality.",
+          "keywords": [
+            "Hardware Based Root of Trust",
+            "HBRT"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-SEC 012 V3.1.1 (2017-01) Sec 8.10]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.8.4.a",
+              "text": "The host system shall include an HBRT or Trusted Platform Module (TPM) as Initial\nRoot of Trust. The HBRT shall be based on hardware-based TPM or equivalent\nhardware root of trust (e.g., Secure Element including TPM functionalities, HSM\nincluding TPM functionalities).",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.8.4.b",
+              "text": "The host system HBRT shall be able to provide isolated instances of the HBRT\ncapabilities for individual workloads.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.8.4.c",
+              "text": "The host system HBRT shall include a hardware-based compute engine to be used by\nthe workloads for cryptographic and security functionality.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.8.5",
+          "title": "Core Hardware -HBRT",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "(a) The HBRT shall be both physically and electronically tamper-resistant.\n(b) The HBRT shall be both physically and electronically tamper-evident.\n(c) The HBRT physical and software interfaces between the HBRT and other hardware\ncomponents of the host system to which it directly communicates shall be protected\nfrom eavesdropping, manipulation, replay or similar attacks.\n(d) It shall be possible to restrict the booting procedure if assistance from the HBRT is not\navailable or the HBRT currently does not contain valid cryptographic material.\n(e) Any tampering to the HBRT shall lead to detectable degradation of its function.\n(f) The HBRT shall be (physically and/or logically) bound to the host system, so that any\nattempt to remove the HBRT will be detected and prevent normal operation of the host\nsystem.\n(g) The HBRT shall include an Immutable Unique Identification value physically linked to\nthe physical root of trust that can be used as identification of the platform. This value\nshall be stored in a shielded location protected from unauthorized use and disclosure.\n(h) The HBRT shall provide capabilities to allow itself to be part of an attestation function.\nNote: OEM shall submit an undertaking along with Explanatory Note",
+          "keywords": [
+            "Core Hardware  HBRT",
+            "HBRT"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-SEC 012 V3.1.1 (2017-01) Sec 5.1]"
+          ]
+        },
+        {
+          "id": "3.8.6",
+          "title": "Trusted computing technologies",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Silicon-based security functionality (for example Intel TXT, SGX, AMD SEV or ARM Trust zone)\nshall be implemented with a TPM that stores measurements of the entire hypervisor or CIS\nstack and boot process to provide a trusted hardware platform.",
+          "keywords": [
+            "Trusted computing technologies"
+          ]
+        },
+        {
+          "id": "3.8.7",
+          "title": "Direct access to memory",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The host system shall be able to deny direct access to memory to particular hardware\nresources.",
+          "keywords": [
+            "Direct access to memory"
+          ],
+          "cross_references": [
+            "[Ref: ETSI GS NFV-SEC 012 V3.1.1 section 8.12]"
+          ]
+        },
+        {
+          "id": "3.8.8",
+          "title": "Monitoring of resource usage at both VNF infrastructure (VNFI) and level of",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "guest VNFs\nMonitoring shall be put in place at both the infrastructure level and the level of guest VNFs.\nThese two layers will require interfaces with the management & orchestration system to\nconsume monitoring information, then act on it accordingly.",
+          "keywords": [
+            "Monitoring of resource usage at both VNF infrastructure",
+            "VNFI",
+            "and level of",
+            "VNF"
+          ],
+          "cross_references": [
+            "[Ref: ETSI GS NFV SEC 001 V1.1.1 (2014-10) clause 6.5.5]"
+          ]
+        },
+        {
+          "id": "3.8.9",
+          "title": "Time Synchronization",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Given that token expiration is a component of Identity and Access Management, time\nsynchronization among the servers is critical and hence shall be implemented.\nNote: This clause requires IAM for testing. The parameters/features that are required to be\nconfigured/enabled for successful testing are to be made available in the system/DUT in\nfulfillment of this clause.",
+          "keywords": [
+            "Time Synchronization"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-SEC 002 V1.1.1 Section 5.10]"
+          ]
+        },
+        {
+          "id": "3.8.10",
+          "title": "Lifetime of entities",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "It is important that the lifetime of Management and Orchestration entities shall be long,\nrelative to the lifetime of entities which they control, such as VNFs, and VNFCIs.",
+          "keywords": [
+            "Lifetime of entities"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-SEC 003 V1.1.1 Section 5.3.2]"
+          ]
+        },
+        {
+          "id": "3.8.11",
+          "title": "Provisioning/Deployment",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "(a) Regarding the provisioning of servers, switches, routers and networking, tools must\nbe used to automate the provisioning eliminating human error.\n(b) The deployment tool is a sensitive component storing critical information\n(deployment scripts, credentials, etc.).\nThe following rules must be applied:",
+          "keywords": [
+            "Provisioning",
+            "Deployment"
+          ],
+          "cross_references": [
+            "[Reference: GSMA NG.133 Cloud Infrastructure Reference Architecture v1.0 Section: 6.3.6.1]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.8.11.i",
+              "text": "The boot of the server or the VM hosting the deployment tool must be protected\nii) The integrity of the deployment images must be checked, before starting deployment\niii) The deployment must be done through dedicated network (e.g., VLAN)\niv) When the deployment is finished, the deployment tool must be turned-off, if the tool is\nonly dedicated to deployment. Otherwise, any access to the deployment tool must be\nrestricted.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.8.12",
+          "title": "Confidentiality and Integrity of communications",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) It is essential to secure the infrastructure from external attacks. To counter this threat,\nAPI endpoints exposed to external networks shall be protected by either a rate-limiting\nproxy or web application firewall (WAF), and shall be placed behind a reverse HTTPS\nproxy.\nb) It shall be ensured that integrity and confidentiality of all network communications\n(internal and external) by using Transport Layer Security (TLS) protocol Ver 1.2 or\nabove.",
+          "keywords": [
+            "Confidentiality and Integrity of communications"
+          ],
+          "cross_references": [
+            "[Reference: GSMA NG.133 Cloud Infrastructure Reference Architecture v 1.0]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.8.12.a",
+              "text": "It is essential to secure the infrastructure from external attacks. To counter this threat,\nAPI endpoints exposed to external networks shall be protected by either a rate-limiting\nproxy or web application firewall (WAF), and shall be placed behind a reverse HTTPS\nproxy.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.8.12.b",
+              "text": "It shall be ensured that integrity and confidentiality of all network communications\n(internal and external) by using Transport Layer Security (TLS) protocol Ver 1.2 or\nabove.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.8.13",
+          "title": "Securing 3rd Party Hosting Environments",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) Sensitive information of virtualized NFs shall be confidentiality protected when using\na 3rd party environment (e.g., NFVI).\nb) The system shall be able to monitor the attestation of 3rd party hosting environments.\nNote: The parameters/features that are required to be configured/enabled for successful\ntesting are to be made available in the system/DUT in fulfillment of this clause.\n[Reference: 1)3GPP 33.848-17.1.0 V.0.11.0 Section 5.21 2)  ETSI GS NFV-SEC 010 V1.1.1\n(2016-04) Section 6.9   3) ENISA NFV Security in 5G - Challenges and Best Practices (February\n2022) BP-T29]",
+          "keywords": [
+            "Securing 3rd Party Hosting Environments"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.8.13.a",
+              "text": "Sensitive information of virtualized NFs shall be confidentiality protected when using\na 3rd party environment (e.g., NFVI).",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.8.13.b",
+              "text": "The system shall be able to monitor the attestation of 3rd party hosting environments.\nNote: The parameters/features that are required to be configured/enabled for successful\ntesting are to be made available in the system/DUT in fulfillment of this clause.\n[Reference: 1)3GPP 33.848-17.1.0 V.0.11.0 Section 5.21 2)  ETSI GS NFV-SEC 010 V1.1.1\n(2016-04) Section 6.9   3) ENISA NFV Security in 5G - Challenges and Best Practices (February\n2022) BP-T29]",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.8.14",
+          "title": "Isolation of VM’s/Containers (VM and Hypervisor Breakout)",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) The NFVI shall provide security isolation to minimize the impact of and detect\nhypervisor/VM breakout on a virtualized 3GPP NF.\nb) The system shall prevent and detect attacks that breakout from an attacked VNF\nthrough the virtualization layer to any other VNF or any other location.",
+          "keywords": [
+            "Isolation of VM’s",
+            "Containers",
+            "VM and Hypervisor Breakout",
+            "VM"
+          ],
+          "cross_references": [
+            "[Reference: 3GPP TR 33.848-17.1.0 V.0.11.0. Section 5.22]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.8.14.a",
+              "text": "The NFVI shall provide security isolation to minimize the impact of and detect\nhypervisor/VM breakout on a virtualized 3GPP NF.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.8.14.b",
+              "text": "The system shall prevent and detect attacks that breakout from an attacked VNF\nthrough the virtualization layer to any other VNF or any other location.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.8.15",
+          "title": "Backend access Security",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The integrity of resources management requests coming from a higher orchestration layer to\nthe Cloud Infrastructure manage shall be validated and verified.",
+          "keywords": [
+            "Backend access Security"
+          ],
+          "cross_references": [
+            "[Reference: GSMA NG 126 Ver 3.0 Section 7.4.2]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.9",
+      "title": "Virtualization Security",
+      "chapter": "SSR",
+      "requirements": [
+        {
+          "id": "3.9.1",
+          "title": "Isolation of VM’s (VM and Hypervisor Breakout)",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) The NFVI shall provide security isolation to minimize the impact of and detect\nhypervisor/VM breakout on a virtualized IP Router NF.\nb) The system shall prevent and detect attacks that breakout from an attacked VNF\nthrough the virtualization layer to any other VNF or any other location.",
+          "keywords": [
+            "Isolation of VM’s",
+            "VM and Hypervisor Breakout",
+            "VM"
+          ],
+          "cross_references": [
+            "[Reference: 3GPP TR 33.848-17.1.0 V.0.11.0. Section 5.22]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.9.1.a",
+              "text": "The NFVI shall provide security isolation to minimize the impact of and detect\nhypervisor/VM breakout on a virtualized IP Router NF.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.9.1.b",
+              "text": "The system shall prevent and detect attacks that breakout from an attacked VNF\nthrough the virtualization layer to any other VNF or any other location.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.9.2",
+          "title": "Data synchronicity through network",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The virtualized IP Router NFs shall be protected from distributed monitoring attacks.  The\nsystem shall dynamically assign VNF resources (e.g. memory address) to prevent long-term\ndata leakage and exposure and protect network resources.",
+          "keywords": [
+            "Data synchronicity through network"
+          ],
+          "cross_references": [
+            "[Reference: 3GPP TR 33.848-17.1.0 V.0.11.0. Section 5.25]"
+          ]
+        },
+        {
+          "id": "3.9.3",
+          "title": "Availability",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "It shall be possible to replicate virtual machine/ containers into various zones and clusters to\nachieve high availability.",
+          "keywords": [
+            "Availability"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-SEC 002 V1.1.1 Section 9]"
+          ]
+        },
+        {
+          "id": "3.9.4",
+          "title": "Token Generation",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The parameters relevant to the token, i.e., lifespan and key length shall be configurable during\nthe token generation.",
+          "keywords": [
+            "Token Generation"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-SEC 002 V1.1.1 Section 5.2.2]"
+          ]
+        },
+        {
+          "id": "3.9.5",
+          "title": "Policies for workload placement in Retained data",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Retained Data collection, storage and query shall only take place within the country. An\nundertaking in this regard shall be submitted.",
+          "keywords": [
+            "Policies for workload placement in Retained data"
+          ],
+          "cross_references": [
+            "[Reference: ETSI GS NFV-SEC 010 V1.1.1 (2016-04) Section 6.5]"
+          ]
+        },
+        {
+          "id": "3.9.6",
+          "title": "Validating the Topology of Virtualized Network Functions",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "a) The topology of the Virtualized Network functions needs to be validated to ensure that\nthe connectivity of the whole network, including all its virtualized functions meets its\nsecurity policy.\nb) It also needs to be verified that any unauthorized connectivity shall not be present and\nthat it cannot be added by any unauthorized party.",
+          "keywords": [
+            "Validating the Topology of Virtualized Network Functions"
+          ],
+          "cross_references": [
+            "[Reference– ETSI GS NFV SEC 001 V1.1.1 (2014-10) clause 6.1.2]"
+          ],
+          "sub_requirements": [
+            {
+              "id": "3.9.6.a",
+              "text": "The topology of the Virtualized Network functions needs to be validated to ensure that\nthe connectivity of the whole network, including all its virtualized functions meets its\nsecurity policy.",
+              "obligation": "SHALL"
+            },
+            {
+              "id": "3.9.6.b",
+              "text": "It also needs to be verified that any unauthorized connectivity shall not be present and\nthat it cannot be added by any unauthorized party.",
+              "obligation": "SHALL"
+            }
+          ]
+        },
+        {
+          "id": "3.9.7",
+          "title": "Network Address Translation",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Support for the private IP address to communicate with a host on the public network shall be\nprovided.",
+          "keywords": [
+            "Network Address Translation"
+          ],
+          "cross_references": [
+            "[Reference– ETSI GS NFV-SEC 002 V1.1.1 Section 8.3]"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3.10",
+      "title": "Wi-Fi Access Related",
+      "chapter": "SSR",
+      "requirements": [
+        {
+          "id": "3.10.1",
+          "title": "SSID Scanning",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The following requirement shall be met by a Wi-Fi capable network product:\ni. The network product shall not reveal sensitive information such as PINs or other\nsecurity details during SSID scans or potential attack scenarios.\nii. Disguised feedback for unsuccessful attempts: DUT shall provide only generic\nerror messages or feedback to users, on unsuccessful attempts, without disclosing\nspecific reasons.\niii. SSID hide/unhide Feature: Allow users the option to hide or unhide the SSID of\ntheir wireless network.",
+          "keywords": [
+            "SSID Scanning",
+            "SSID"
+          ]
+        },
+        {
+          "id": "3.10.2",
+          "title": "Unused Physical and logical Interfaces Disabling",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The Wi-Fi capable Network product shall support the mechanism to verify all the physically\naccessible interfaces. Physically accessible Interfaces (including LAN ports) and logical\ninterfaces which are not under use shall be disabled by configuration so that they remain\ninactive even in the event of a reboot.",
+          "keywords": [
+            "Unused Physical and logical Interfaces Disabling"
+          ]
+        },
+        {
+          "id": "3.10.3",
+          "title": "Authentication Support - External",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "If Wi-Fi capable Network product supports external authentication and the authentication\ncredentials are managed by external authentication servers, then the user authentication\ncredentials shall be protected and securely communicated between external authentication\nserver and the Wi-Fi capable network product.",
+          "keywords": [
+            "Authentication Support   External"
+          ]
+        },
+        {
+          "id": "3.10.4",
+          "title": "Remote Management Standards for Connected Devices, Additional Features",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Remote management mechanisms for devices connected to the Wi-Fi capable network\nproduct including additional features like DDNS and UPnP, must adhere to the latest\nstandards available at the time security testing begins. These features should be disabled by\ndefault in the factory settings, with options for device Administrators to enable the specific\nfeatures through menu selection. Furthermore, these mechanisms should incorporate\nmutual authentication and encrypt management traffic to ensure security.",
+          "keywords": [
+            "Remote Management Standards for Connected Devices",
+            "Additional Features"
+          ]
+        },
+        {
+          "id": "3.10.5",
+          "title": "Restricted reachability of services",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The Wi-Fi capable Network product shall restrict the reachability of services so that they can\nonly be reached on interfaces where their usage is required. OEM to map the essential\nservices required to be accessed from WAN side, LAN side to limit access to services only on\nneed / functionality basis. For Interfaces on which services are active, the reachability to be\nlimited to legitimate communication peers. One such Use-case scenario is to restrict web-\nmanagement access of Wi-Fi capable Network product to only LAN ports and not to permit\naccess on Wi-Fi, WAN side.",
+          "keywords": [
+            "Restricted reachability of services"
+          ],
+          "cross_references": [
+            "[Ref: TEC 25848:2022 / TSDSI STD T1.3GPP 33.117-16.7.0 V.1.0.0. Section 4.3.2.2]"
+          ]
+        },
+        {
+          "id": "3.10.6",
+          "title": "Cryptographic Algorithm selection for Wi-Fi Access",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [
+            "wifi"
+          ],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "Wi-Fi capable Network product shall support WPA2-PSK with AES-128 or higher as default standard. Additionally, WPA2 version must support PMF (Protected Management Frames). All types of Wi-Fi capable Network products shall also support WPA3 and WPA shall not be supported.",
+          "keywords": [
+            "WPA2-PSK",
+            "AES-128",
+            "PMF",
+            "WPA3"
+          ]
+        },
+        {
+          "id": "3.10.7",
+          "title": "Cryptographic Based Secure Communication on Wi-Fi Access",
+          "obligation": "SHALL",
+          "applicable_router_types": [
+            "conventional",
+            "sdn",
+            "cloud_native",
+            "virtual",
+            "cloud_managed"
+          ],
+          "required_capability_flags": [],
+          "evidence_type": "technical",
+          "is_prohibition": false,
+          "compliance_by_undertaking": false,
+          "text": "The communication security dimension on Wi-Fi access ensures that information flows only\nbetween the authorized end points (the information is not diverted or intercepted as it\nflows between these end points). IP Router shall support security mechanism to protect\nagainst well-known attacks like capture-decrypting, PIN detection, Key recovery, Key\nreinstallation attacks.",
+          "keywords": [
+            "Cryptographic Based Secure Communication on Wi Fi Access"
+          ]
+        }
+      ]
+    }
+  ]
+}
