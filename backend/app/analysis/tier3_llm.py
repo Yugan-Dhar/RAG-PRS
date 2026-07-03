@@ -57,6 +57,7 @@ class Tier3LLM:
         requirement_title: str,
         requirement_text: str,
         evidence_chunks: List[Dict[str, Any]],
+        capability_ledger: Dict[str, Any] = None
     ) -> str:
         context_parts = []
         for i, chunk in enumerate(evidence_chunks[:5]):
@@ -66,12 +67,23 @@ class Tier3LLM:
                 context_parts.append(f"[{chunk_id}] {text[:500]}")
         context = "\n\n".join(context_parts) if context_parts else "No relevant excerpts found."
 
+        ledger_section = ""
+        if capability_ledger:
+            ledger_json = json.dumps(capability_ledger, indent=2)
+            ledger_section = (
+                f"GLOBAL PRODUCT FACTS:\n"
+                f"The following capabilities have been globally confirmed for this product:\n"
+                f"{ledger_json}\n"
+                f"Use these facts to supplement the excerpts if the excerpts alone are incomplete.\n\n"
+            )
+
         return (
             "You are an enterprise security compliance gap analyst.\n"
-            "Assess the requirement using only the supplied excerpts.\n\n"
+            "Assess the requirement using only the supplied excerpts and global facts.\n\n"
             f"REQUIREMENT TITLE: {requirement_title}\n"
             f"REQUIREMENT TEXT: {requirement_text}\n\n"
             f"EVIDENCE EXCERPTS:\n{context}\n\n"
+            f"{ledger_section}"
             "GUIDELINES FOR JUSTIFICATION:\n"
             "- Write a concise explanation in 2-3 natural sentences.\n"
             "- Start by describing what the requirement expects.\n"
@@ -135,6 +147,7 @@ class Tier3LLM:
         requirement_title: str,
         requirement_text: str,
         evidence_chunks: List[Dict[str, Any]],
+        capability_ledger: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         if not self.requests:
             return {
@@ -158,7 +171,7 @@ class Tier3LLM:
                 "verdict_bool": False,
             }
 
-        prompt = self._build_gap_analysis_prompt(requirement_title, requirement_text, evidence_chunks)
+        prompt = self._build_gap_analysis_prompt(requirement_title, requirement_text, evidence_chunks, capability_ledger)
         cache_key = self._cache_key(prompt)
         cached = self._read_cache(cache_key)
         if cached is not None:
@@ -195,8 +208,25 @@ class Tier3LLM:
         parsed.setdefault("extracted_evidence", [])
         parsed.setdefault("matched_concepts", [])
         parsed.setdefault("missing_concepts", [])
-        parsed.setdefault("justification", "")
-        parsed.setdefault("recommendation", "")
+        
+        # Post-hoc consistency check
+        if capability_ledger and parsed.get("missing_concepts"):
+            # A simple programmatic check: if any missing concept substring matches a ledger value
+            # e.g. "SSH" is in missing_concepts, but ledger has "SSHv2"
+            flat_ledger = " ".join(
+                [str(v) for sublist in capability_ledger.values() if isinstance(sublist, list) for v in sublist] +
+                [str(v) for v in capability_ledger.values() if isinstance(v, str)]
+            ).lower()
+            
+            for missing_concept in parsed["missing_concepts"]:
+                if len(missing_concept) > 2 and missing_concept.lower() in flat_ledger:
+                    parsed["ledger_contradiction_flag"] = True
+                    logger.warning(
+                        "Ledger contradiction flagged! LLM claims missing: '%s' but it exists in ledger.",
+                        missing_concept
+                    )
+                    break
+
         parsed["verdict_bool"] = verdict_bool
         try:
             self._write_cache(cache_key, parsed)

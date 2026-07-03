@@ -121,6 +121,10 @@ async def run_assessment_task(job_id: str, standard_id: str, framework_id: str, 
                 db.add(job)
                 await db.commit()
 
+            from app.analysis.capability_ledger import CapabilityExtractor
+            cap_extractor = CapabilityExtractor(orchestrator.retriever)
+            capability_ledger = await cap_extractor.build_ledger(doc_id)
+
             group_sem = asyncio.Semaphore(_bounded_concurrency("ASSESSMENT_GROUP_CONCURRENCY", 2))
 
             async def process_group(group):
@@ -165,7 +169,7 @@ async def run_assessment_task(job_id: str, standard_id: str, framework_id: str, 
                                 )
                                 await session.commit()
 
-                    return await orchestrator.assess_group(group, children, progress_callback=on_result_done, numeric_chunks=numeric_chunks)
+                    return await orchestrator.assess_group(group, children, progress_callback=on_result_done, numeric_chunks=numeric_chunks, capability_ledger=capability_ledger)
 
             tasks = [process_group(group) for group in reqs]
             all_results = await asyncio.gather(*tasks, return_exceptions=True)

@@ -245,7 +245,7 @@ class AssessmentOrchestrator:
             return "Provide a security target, configuration guide, or test evidence that directly addresses this requirement."
         return llm_recommendation or "Review this requirement manually."
 
-    async def _assess_child(self, child: Dict[str, Any], numeric_chunks: List[Dict[str, Any]] = None) -> AssessmentResultCreate:
+    async def _assess_child(self, child: Dict[str, Any], numeric_chunks: List[Dict[str, Any]] = None, capability_ledger: Dict[str, Any] = None) -> AssessmentResultCreate:
         requirement_id = child.get("id", "Unknown")
         requirement_title = child.get("title", requirement_id)
         requirement_text = child.get("text", "")
@@ -296,7 +296,12 @@ class AssessmentOrchestrator:
         evidence_quality_score = self.quality.assess(evidence_chunks)
         capability_score, observed_caps, missing_caps = self.tier2.analyze(expected_capabilities, evidence_chunks)
 
-        llm_result = await self.tier3.analyze_requirement(requirement_title, requirement_text, evidence_chunks)
+        llm_result = await self.tier3.analyze_requirement(
+            requirement_title=requirement_id,
+            requirement_text=requirement_text,
+            evidence_chunks=evidence_chunks,
+            capability_ledger=capability_ledger
+        )
         llm_status = self._normalize_status(llm_result.get("verdict"))
         grounding_score = self.grounding.verify(llm_result.get("justification", ""), evidence_chunks)
 
@@ -410,7 +415,8 @@ class AssessmentOrchestrator:
         group: Dict[str, Any],
         children: List[Dict[str, Any]],
         progress_callback=None,
-        numeric_chunks: List[Dict[str, Any]] = None
+        numeric_chunks: List[Dict[str, Any]] = None,
+        capability_ledger: Dict[str, Any] = None
     ) -> List[AssessmentResultCreate]:
         group_id = "GROUP-" + group.get("id", "Unknown")
         group_title = group.get("title", group.get("id", "Unknown"))
@@ -420,7 +426,7 @@ class AssessmentOrchestrator:
 
         async def process_child(index: int, child: Dict[str, Any]):
             async with child_sem:
-                result = await self._assess_child(child, numeric_chunks)
+                result = await self._assess_child(child, numeric_chunks, capability_ledger)
                 if progress_callback:
                     await progress_callback(result)
                 return index, result
