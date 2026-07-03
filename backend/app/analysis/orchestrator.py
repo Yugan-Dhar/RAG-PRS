@@ -245,7 +245,7 @@ class AssessmentOrchestrator:
             return "Provide a security target, configuration guide, or test evidence that directly addresses this requirement."
         return llm_recommendation or "Review this requirement manually."
 
-    async def _assess_child(self, child: Dict[str, Any]) -> AssessmentResultCreate:
+    async def _assess_child(self, child: Dict[str, Any], numeric_chunks: List[Dict[str, Any]] = None) -> AssessmentResultCreate:
         requirement_id = child.get("id", "Unknown")
         requirement_title = child.get("title", requirement_id)
         requirement_text = child.get("text", "")
@@ -283,6 +283,13 @@ class AssessmentOrchestrator:
         candidate_chunks = self.retriever.retrieve(dense_query=semantic_query, sparse_query=keyword_query, top_k=20)
         reranked = self.reranker.rerank(semantic_query, candidate_chunks, top_k=8) if candidate_chunks else []
         evidence_chunks = self._filter_requirement_echoes(reranked, requirement_text)
+
+        # Inject numeric chunks if this requirement looks numeric
+        if numeric_chunks:
+            # simple heuristic: if it has digits, it might be a numeric requirement
+            import re
+            if bool(re.search(r'\d', requirement_text)):
+                evidence_chunks = numeric_chunks[:5] + evidence_chunks
 
         semantic_score = self.tier1.compute_score(evidence_chunks)
         semantic_quality = self.tier1.compute_quality(child, evidence_chunks)
@@ -403,6 +410,7 @@ class AssessmentOrchestrator:
         group: Dict[str, Any],
         children: List[Dict[str, Any]],
         progress_callback=None,
+        numeric_chunks: List[Dict[str, Any]] = None
     ) -> List[AssessmentResultCreate]:
         group_id = "GROUP-" + group.get("id", "Unknown")
         group_title = group.get("title", group.get("id", "Unknown"))
@@ -412,7 +420,7 @@ class AssessmentOrchestrator:
 
         async def process_child(index: int, child: Dict[str, Any]):
             async with child_sem:
-                result = await self._assess_child(child)
+                result = await self._assess_child(child, numeric_chunks)
                 if progress_callback:
                     await progress_callback(result)
                 return index, result
@@ -485,5 +493,5 @@ class AssessmentOrchestrator:
 
         return child_results + [group_result]
 
-    async def assess_requirement(self, requirement: Dict[str, Any]) -> AssessmentResultCreate:
-        return await self._assess_child(requirement)
+    async def assess_requirement(self, requirement: Dict[str, Any], numeric_chunks: List[Dict[str, Any]] = None) -> AssessmentResultCreate:
+        return await self._assess_child(requirement, numeric_chunks)

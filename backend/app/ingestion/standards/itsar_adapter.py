@@ -17,6 +17,7 @@ class ITSARAdapter(StandardAdapter):
 
         mapping = {
             "ITSAR-ROUTER": "itsar_router_v2.json",
+            "ITSAR-LAN": "itsar_lan_switch_v1.json",
         }
 
         filename = mapping.get(framework_id)

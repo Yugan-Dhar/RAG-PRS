@@ -21,7 +21,7 @@ class Tier3LLM:
 
     def __init__(
         self,
-        host: str = "http://localhost:11434",
+        host: str = "http://127.0.0.1:11434",
         model: str = "llama3.2:latest",
         cache_dir: str | None = None,
     ):
@@ -87,11 +87,14 @@ class Tier3LLM:
             "  * 'The documentation provides evidence of [Y].'\n\n"
             "Return exactly one valid JSON object with these keys:\n"
             "{\n"
+            '  "concept_analysis": [\n'
+            '    {"concept": "mandatory concept from requirement", "status": "evidenced or missing", "excerpt": "relevant evidence snippet if found"}\n'
+            '  ],\n'
             '  "verdict": "COMPLIANT" or "PARTIAL" or "NON-COMPLIANT",\n'
             '  "extracted_evidence": ["short direct evidence statements copied or paraphrased from excerpts"],\n'
             '  "matched_concepts": ["requirement concepts that are evidenced"],\n'
             '  "missing_concepts": ["requirement concepts that are not evidenced"],\n'
-            '  "justification": "Your 2-3 sentence explanation following the GUIDELINES FOR JUSTIFICATION.",\n'
+            '  "justification": "Your 2-3 sentence explanation following the GUIDELINES FOR JUSTIFICATION, derived from your concept_analysis.",\n'
             '  "recommendation": "single next action for compliance officer"\n'
             "}\n"
             "Do not include markdown or any extra text."

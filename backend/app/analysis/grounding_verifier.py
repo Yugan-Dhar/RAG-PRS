@@ -24,9 +24,9 @@ class GroundingVerifier:
         if not self.model or not evidence_chunks or not justification:
             return 1.0
 
-        # Combine evidence into a single premise (max ~500 chars to keep inference fast)
-        premise_parts = [chunk["payload"].get("text", "") for chunk in evidence_chunks[:3]]
-        premise = " ".join(premise_parts)[:600]
+        # Combine evidence into a single premise (max ~2000 chars to cover top 5 chunks)
+        premise_parts = [chunk["payload"].get("text", "") for chunk in evidence_chunks[:5]]
+        premise = " ".join(premise_parts)[:2000]
 
         # Run NLI prediction — returns raw logits, shape (1, 3)
         logits = self.model.predict([(premise, justification[:300])])

@@ -2,11 +2,20 @@ from pydantic import BaseModel
 
 class RequirementBase(BaseModel):
     req_id: str
-    category: str
-    section: str | None = None
+    chapter: str
+    section_number: str | None = None
+    section_title: str | None = None
+    title: str | None = None
     obligation_level: str
     text: str
     expected_capabilities: list = []
+    applicable_router_types: list = []
+    required_capability_flags: list = []
+    evidence_type: str = "technical"
+    is_prohibition: bool = False
+    compliance_by_undertaking: bool = False
+    keywords: list = []
+    cross_references: list = []
 
 class RequirementCreate(RequirementBase):
     pass

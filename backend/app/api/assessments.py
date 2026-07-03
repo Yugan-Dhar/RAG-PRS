@@ -75,6 +75,10 @@ async def run_assessment_task(job_id: str, standard_id: str, framework_id: str, 
             for chunk in chunks:
                 chunk.setdefault("metadata", {})["filename"] = file_name.lower()
 
+            from app.retrieval.numeric_extractor import NumericExtractor
+            num_extractor = NumericExtractor()
+            numeric_chunks = num_extractor.extract(text, doc_id)
+
             embedder = BGEEmbedder()
             texts = [chunk["text"] for chunk in chunks]
             embeddings = embedder.embed_documents(texts)
@@ -161,10 +165,13 @@ async def run_assessment_task(job_id: str, standard_id: str, framework_id: str, 
                                 )
                                 await session.commit()
 
-                    return await orchestrator.assess_group(group, children, progress_callback=on_result_done)
+                    return await orchestrator.assess_group(group, children, progress_callback=on_result_done, numeric_chunks=numeric_chunks)
 
             tasks = [process_group(group) for group in reqs]
             all_results = await asyncio.gather(*tasks, return_exceptions=True)
+            for res in all_results:
+                if isinstance(res, Exception):
+                    logging.error("Exception in group processing: %s", res, exc_info=res)
             for results_schemas in all_results:
                 if isinstance(results_schemas, Exception):
                     logging.error("Group processing failed: %s", results_schemas)
