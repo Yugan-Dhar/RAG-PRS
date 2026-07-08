@@ -50,12 +50,26 @@ class HybridRetriever:
         return fused
 
     def retrieve(self, dense_query: str, sparse_query: str, top_k: int = 10) -> List[Dict[str, Any]]:
+        from qdrant_client.models import Filter, FieldCondition, MatchValue
+        query_filter = Filter(
+            must_not=[
+                FieldCondition(
+                    key="content_type",
+                    match=MatchValue(value="reference_design")
+                )
+            ]
+        )
+        
         # 1. Dense retrieval (Semantic search using natural language)
         query_embedding = self.embedder.embed_query(dense_query)
-        dense_results = self.dense.search(query_embedding, top_k=top_k*2)
+        dense_results = self.dense.search(query_embedding, top_k=top_k*2, query_filter=query_filter)
         
         # 2. Sparse retrieval (Keyword search using expanded terms)
-        sparse_results = self.sparse.search(sparse_query, top_k=top_k*2)
+        raw_sparse_results = self.sparse.search(sparse_query, top_k=top_k*4)
+        sparse_results = [
+            res for res in raw_sparse_results
+            if res.get("payload", {}).get("content_type") != "reference_design"
+        ][:top_k*2]
         
         # 3. Fusion
         fused_results = self.rrf_fusion(dense_results, sparse_results)

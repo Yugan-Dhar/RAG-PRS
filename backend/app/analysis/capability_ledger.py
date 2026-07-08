@@ -51,9 +51,18 @@ Respond with the JSON object only. Do not include markdown or extra text.
             ("password policy session timeout account lockout", "session timeout account lockout")
         ]
         
+        loop = asyncio.get_running_loop()
+        
         all_chunks = []
         for dense_q, sparse_q in queries:
-            chunks = self.retriever.retrieve(dense_query=dense_q, sparse_query=sparse_q, top_k=3)
+            # Run retrieve in executor because it uses synchronous PyTorch/SentenceTransformers
+            chunks = await loop.run_in_executor(
+                None, 
+                self.retriever.retrieve, 
+                dense_q, 
+                sparse_q, 
+                3
+            )
             all_chunks.extend(chunks)
             
         # Deduplicate by ID
@@ -64,9 +73,12 @@ Respond with the JSON object only. Do not include markdown or extra text.
         
         loop = asyncio.get_running_loop()
         try:
-            from app.analysis.tier3_llm import OLLAMA_LOCK
-            if OLLAMA_LOCK:
-                async with OLLAMA_LOCK:
+            import app.analysis.tier3_llm as tier3_llm
+            if tier3_llm.OLLAMA_LOCK is None:
+                tier3_llm.OLLAMA_LOCK = asyncio.Lock()
+                
+            if tier3_llm.OLLAMA_LOCK:
+                async with tier3_llm.OLLAMA_LOCK:
                     response_text = await loop.run_in_executor(None, self.llm._call_ollama_sync, prompt)
             else:
                 response_text = await loop.run_in_executor(None, self.llm._call_ollama_sync, prompt)

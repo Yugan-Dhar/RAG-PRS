@@ -58,15 +58,9 @@ class AssessmentOrchestrator:
             return 0.0
         return len(tokens_a & tokens_b) / len(tokens_a)
 
-    def _filter_requirement_echoes(self, chunks: List[Dict[str, Any]], requirement_text: str) -> List[Dict[str, Any]]:
-        filtered = []
-        for chunk in chunks:
-            chunk_text = chunk.get("payload", {}).get("text", "")
-            if self._token_overlap(requirement_text, chunk_text) < self.ECHO_OVERLAP_THRESHOLD:
-                filtered.append(chunk)
-        return filtered
-
-    def _is_undertaking_requirement(self, requirement_text: str) -> bool:
+    def _has_undertaking_component(self, requirement_text: str) -> bool:
+        """Check if the requirement mentions an OEM undertaking/self-declaration component.
+        Returns True as a metadata flag — does NOT short-circuit the assessment."""
         lower = requirement_text.lower()
         return (
             "undertaking" in lower
@@ -111,14 +105,17 @@ class AssessmentOrchestrator:
 
     def _normalize_status(self, verdict: str | None) -> str:
         verdict_upper = (verdict or "").upper()
-        if "NON" in verdict_upper:
-            return "non_compliant"
-        if "COMPLIANT" in verdict_upper and "NON" not in verdict_upper:
-            return "compliant"
+        if "ANALYSIS_FAILED" in verdict_upper:
+            return "analysis_failed"
+        if "EVIDENCE_NOT_FOUND" in verdict_upper or "EVIDENCE-NOT-FOUND" in verdict_upper:
+            return "evidence_not_found"
         if "PARTIAL" in verdict_upper:
             return "partial"
-        return "manual_review"
-
+        if "NON" in verdict_upper:
+            return "non_compliant"
+        if "COMPLIANT" in verdict_upper:
+            return "compliant"
+        return "analysis_failed"
     def _calculate_confidence(
         self,
         semantic_score: float,
@@ -127,7 +124,15 @@ class AssessmentOrchestrator:
         grounding_score: float,
         llm_status: str,
         final_status: str,
+        missing_concepts: List[str] = None,
+        uncertain_concepts: List[str] = None,
     ) -> float:
+        missing = missing_concepts or []
+        uncertain = uncertain_concepts or []
+        
+        if final_status in {"analysis_failed", "manual_review"}:
+            return 0.0
+            
         llm_alignment = 1.0 if llm_status == final_status else 0.6 if llm_status in {"partial", "manual_review"} else 0.35
         score = (
             0.30 * semantic_score
@@ -136,6 +141,12 @@ class AssessmentOrchestrator:
             + 0.15 * grounding_score
             + 0.10 * llm_alignment
         )
+        
+        if missing:
+            score -= 0.05 * len(missing)
+        if uncertain:
+            score -= 0.15 * len(uncertain)
+            
         return max(0.0, min(1.0, round(score, 3)))
 
     def _build_fallback_evidence(self, evidence_chunks: List[Dict[str, Any]]) -> List[str]:
@@ -183,18 +194,33 @@ class AssessmentOrchestrator:
         capability_score: float,
         evidence_quality_score: float,
         evidence_chunks: List[Dict[str, Any]],
-    ) -> tuple[str, List[str], List[str]]:
+        uncertain_concepts: List[str] = None,
+    ) -> tuple[str, List[str], List[str], List[str]]:
         matched = list(dict.fromkeys([c for c in matched_concepts if c]))
         missing = list(dict.fromkeys([c for c in missing_concepts if c]))
+        uncertain = list(dict.fromkeys([c for c in (uncertain_concepts or []) if c]))
         mandatory = list(dict.fromkeys([c for c in mandatory_concepts if c]))
 
         if final_status == "compliant":
-            unresolved = [c for c in missing if c.lower() not in {m.lower() for m in matched}]
-            if unresolved:
+            unresolved_missing = [c for c in missing if c.lower() not in {m.lower() for m in matched}]
+            unresolved_uncertain = [c for c in uncertain if c.lower() not in {m.lower() for m in matched}]
+            
+            if unresolved_missing:
                 has_strong_evidence = semantic_score >= 0.7 and capability_score >= 0.9 and evidence_quality_score >= 0.8
                 if not has_strong_evidence or llm_status in {"partial", "non_compliant"}:
-                    final_status = "partial"
-                    missing = unresolved
+                    final_status = "partial" if llm_status == "partial" else "non_compliant"
+                    missing = unresolved_missing
+            elif unresolved_uncertain:
+                final_status = "partial"
+                missing = unresolved_uncertain
+            # LLM verdict override: if LLM says partial/non_compliant but
+            # scores pushed us to compliant and no missing/uncertain were
+            # detected by the concept lists, still respect the LLM
+            elif llm_status in {"partial", "non_compliant"}:
+                final_status = "partial"
+                # Pull gaps from LLM result if available
+                missing = unresolved_uncertain or ["complete control coverage"]
+                
             if final_status == "compliant":
                 missing = []
                 if mandatory:
@@ -219,7 +245,8 @@ class AssessmentOrchestrator:
             if not missing:
                 missing = ["complete control coverage"]
 
-        return final_status, matched, missing
+        return final_status, matched, missing, uncertain
+
 
     def _build_consistent_recommendation(
         self,
@@ -250,28 +277,8 @@ class AssessmentOrchestrator:
         requirement_title = child.get("title", requirement_id)
         requirement_text = child.get("text", "")
 
-        if self._is_undertaking_requirement(requirement_text):
-            payload = {
-                "verdict": "MANUAL-REVIEW",
-                "summary": "This requirement depends on an OEM undertaking or self-declaration rather than product evidence alone.",
-                "recommendation": "Obtain and validate the signed undertaking artifact from the vendor.",
-                "decision_basis": "undertaking_fast_path",
-                "scores": {},
-                "expected_capabilities": [],
-                "observed_capabilities": [],
-                "matched_concepts": [],
-                "missing_concepts": [],
-                "evidence_excerpt_count": 0,
-                "extracted_evidence": [],
-            }
-            return AssessmentResultCreate(
-                requirement_id=requirement_id,
-                status="manual_review",
-                confidence_score=1.0,
-                justification=json.dumps(payload),
-                evidence_references=[],
-                analysis_details=payload,
-            )
+        # Flag undertaking component but do NOT short-circuit — run full analysis
+        has_undertaking = self._has_undertaking_component(requirement_text)
 
         expected_capabilities = self.tier2.extractor.extract(requirement_text)
         mandatory_concepts = self._mandatory_concepts(child, expected_capabilities)
@@ -282,14 +289,43 @@ class AssessmentOrchestrator:
         
         candidate_chunks = self.retriever.retrieve(dense_query=semantic_query, sparse_query=keyword_query, top_k=20)
         reranked = self.reranker.rerank(semantic_query, candidate_chunks, top_k=8) if candidate_chunks else []
-        evidence_chunks = self._filter_requirement_echoes(reranked, requirement_text)
+        evidence_chunks = reranked
 
         # Inject numeric chunks if this requirement looks numeric
         if numeric_chunks:
             # simple heuristic: if it has digits, it might be a numeric requirement
             import re
+            import numpy as np
             if bool(re.search(r'\d', requirement_text)):
-                evidence_chunks = numeric_chunks[:5] + evidence_chunks
+                query_emb = self.retriever.embedder.embed_query(semantic_query)
+                scored_numerics = []
+                for chunk in numeric_chunks:
+                    if "vector" in chunk:
+                        sim = float(np.dot(query_emb, chunk["vector"]))
+                        if sim > 0.4:
+                            chunk_copy = dict(chunk)
+                            chunk_copy["cosine_score"] = sim
+                            chunk_copy["score"] = sim
+                            scored_numerics.append(chunk_copy)
+                
+                scored_numerics.sort(key=lambda x: x["cosine_score"], reverse=True)
+                evidence_chunks = scored_numerics[:3] + evidence_chunks
+
+        if not evidence_chunks:
+            payload = {
+                "verdict": "EVIDENCE-NOT-FOUND",
+                "summary": "No relevant evidence could be retrieved for this requirement.",
+                "recommendation": "Provide a security target, configuration guide, or test evidence that directly addresses this requirement.",
+                "decision_basis": "retrieval_empty",
+            }
+            return AssessmentResultCreate(
+                requirement_id=requirement_id,
+                status="evidence_not_found",
+                confidence_score=0.0,
+                justification=json.dumps(payload),
+                evidence_references=[],
+                analysis_details=payload,
+            )
 
         semantic_score = self.tier1.compute_score(evidence_chunks)
         semantic_quality = self.tier1.compute_quality(child, evidence_chunks)
@@ -300,7 +336,8 @@ class AssessmentOrchestrator:
             requirement_title=requirement_id,
             requirement_text=requirement_text,
             evidence_chunks=evidence_chunks,
-            capability_ledger=capability_ledger
+            capability_ledger=capability_ledger,
+            expected_capabilities=[cap.concept for cap in expected_capabilities]
         )
         llm_status = self._normalize_status(llm_result.get("verdict"))
         grounding_score = self.grounding.verify(llm_result.get("justification", ""), evidence_chunks)
@@ -313,6 +350,15 @@ class AssessmentOrchestrator:
             [str(c) for c in llm_result.get("missing_concepts", []) if c]
             + [cap.concept for cap in missing_caps]
         ))
+        uncertain_concepts = list(dict.fromkeys(
+            [str(c) for c in llm_result.get("uncertain_concepts", []) if c]
+        ))
+
+        # APPROACH D: Silent Fallback — DISABLED
+        # Previously this moved LLM-identified missing concepts to uncertain
+        # when there were no negative keywords in evidence. This erased real
+        # gaps and caused false-compliant results. Now the LLM's missing
+        # concepts are preserved as-is.
 
         prohibition_details = None
         if self._is_prohibition_requirement(child):
@@ -330,7 +376,12 @@ class AssessmentOrchestrator:
             if not evidence_chunks or semantic_quality["quality"] == "Low":
                 final_status = "evidence_not_found"
             elif capability_score >= 0.80 and semantic_score >= 0.40 and grounding_score >= 0.40:
-                final_status = "compliant"
+                # High numeric scores suggest compliant, but LLM verdict
+                # has final say — if LLM found gaps, cap at partial
+                if llm_status in {"partial", "non_compliant"}:
+                    final_status = "partial"
+                else:
+                    final_status = "compliant"
             elif capability_score >= 0.45 or semantic_score >= 0.28 or llm_status == "partial":
                 final_status = "partial"
             elif llm_status == "compliant" and evidence_quality_score >= 0.75 and grounding_score >= 0.40:
@@ -338,17 +389,21 @@ class AssessmentOrchestrator:
             else:
                 final_status = "non_compliant"
 
-        final_status, matched_concepts, missing_concepts = self._enforce_status_consistency(
-            final_status,
-            llm_status,
-            mandatory_concepts,
-            matched_concepts,
-            missing_concepts,
-            semantic_score,
-            capability_score,
-            evidence_quality_score,
-            evidence_chunks,
-        )
+        if llm_status == "analysis_failed":
+            final_status = "analysis_failed"
+        else:
+            final_status, matched_concepts, missing_concepts, uncertain_concepts = self._enforce_status_consistency(
+                final_status,
+                llm_status,
+                mandatory_concepts,
+                matched_concepts,
+                missing_concepts,
+                semantic_score,
+                capability_score,
+                evidence_quality_score,
+                evidence_chunks,
+                uncertain_concepts,
+            )
 
         confidence = self._calculate_confidence(
             semantic_score,
@@ -357,6 +412,8 @@ class AssessmentOrchestrator:
             grounding_score,
             llm_status,
             final_status,
+            missing_concepts,
+            uncertain_concepts,
         )
 
         extracted_evidence = llm_result.get("extracted_evidence", []) or self._build_fallback_evidence(evidence_chunks)
@@ -393,11 +450,14 @@ class AssessmentOrchestrator:
             "observed_capabilities": [cap.model_dump() for cap in observed_caps],
             "matched_concepts": matched_concepts,
             "missing_concepts": missing_concepts,
+            "uncertain_concepts": uncertain_concepts,
             "evidence_excerpt_count": len(evidence_chunks),
             "extracted_evidence": extracted_evidence,
             "llm_verdict": llm_result.get("verdict"),
             "is_prohibition_requirement": self._is_prohibition_requirement(child),
             "prohibition_details": prohibition_details,
+            "has_undertaking_component": has_undertaking,
+            "gaps": llm_result.get("gaps", []),
         }
 
         evidence_refs = [chunk.get("id") for chunk in evidence_chunks[:4] if chunk.get("id")]

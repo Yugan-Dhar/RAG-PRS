@@ -45,11 +45,12 @@ class QdrantIndexer:
         if points:
             self.client.upsert(collection_name=self.collection_name, points=points)
 
-    def search(self, query_embedding: List[float], top_k: int = 10) -> List[Dict[str, Any]]:
+    def search(self, query_embedding: List[float], top_k: int = 10, query_filter: Any = None) -> List[Dict[str, Any]]:
         results = self.client.query_points(
             collection_name=self.collection_name,
             query=query_embedding,
             limit=top_k,
+            query_filter=query_filter,
         ).points
         return [
             {"id": hit.id, "score": hit.score, "cosine_score": hit.score, "payload": hit.payload}

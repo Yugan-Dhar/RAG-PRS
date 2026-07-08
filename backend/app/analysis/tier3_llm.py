@@ -17,7 +17,7 @@ class Tier3LLM:
     The orchestrator treats this as one signal among several, not the sole judge.
     """
 
-    CACHE_VERSION = "v1"
+    CACHE_VERSION = "v5"
 
     def __init__(
         self,
@@ -27,7 +27,7 @@ class Tier3LLM:
     ):
         self.host = host
         self.model = model
-        self.options = {"temperature": 0.0, "num_predict": 700, "num_ctx": 4096}
+        self.options = {"temperature": 0.0, "num_predict": 800, "num_ctx": 4096}
         default_cache_dir = Path(__file__).resolve().parents[2] / ".rag_store" / "llm_cache"
         self.cache_dir = Path(cache_dir) if cache_dir else default_cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -47,7 +47,7 @@ class Tier3LLM:
                 "format": "json",
                 "options": self.options,
             },
-            timeout=180,
+            timeout=600,
         )
         response.raise_for_status()
         return response.json().get("response", "").strip()
@@ -57,7 +57,8 @@ class Tier3LLM:
         requirement_title: str,
         requirement_text: str,
         evidence_chunks: List[Dict[str, Any]],
-        capability_ledger: Dict[str, Any] = None
+        capability_ledger: Dict[str, Any] = None,
+        expected_capabilities: List[str] = None
     ) -> str:
         context_parts = []
         for i, chunk in enumerate(evidence_chunks[:5]):
@@ -77,13 +78,35 @@ class Tier3LLM:
                 f"Use these facts to supplement the excerpts if the excerpts alone are incomplete.\n\n"
             )
 
+        checklist_section = ""
+        if expected_capabilities:
+            checklist_section = (
+                f"EXPECTED CAPABILITIES CHECKLIST:\n"
+                f"Ensure you evaluate the evidence against these specific required capabilities:\n"
+                f"{json.dumps(expected_capabilities)}\n\n"
+            )
+
         return (
             "You are an enterprise security compliance gap analyst.\n"
             "Assess the requirement using only the supplied excerpts and global facts.\n\n"
             f"REQUIREMENT TITLE: {requirement_title}\n"
             f"REQUIREMENT TEXT: {requirement_text}\n\n"
+            f"{checklist_section}"
             f"EVIDENCE EXCERPTS:\n{context}\n\n"
             f"{ledger_section}"
+            "VERDICT GUIDELINES:\n"
+            "- COMPLIANT: ALL sub-clauses of the requirement are fully satisfied by evidence.\n"
+            "- PARTIAL: The evidence satisfies SOME sub-clauses but NOT ALL. Even if most are covered, "
+            "use PARTIAL if any sub-clause lacks evidence or has a gap. List the specific gaps.\n"
+            "- NON-COMPLIANT: The evidence contradicts the requirement or no sub-clause is satisfied.\n\n"
+            "CRITICAL RULES:\n"
+            "- If your justification mentions ANY missing evidence, lack of information, or gaps, you MUST return PARTIAL or NON-COMPLIANT, never COMPLIANT.\n"
+            "- If the requirement mentions an OEM undertaking or self-declaration, still assess the "
+            "product-testable parts of the requirement against the evidence. Note that the undertaking "
+            "is a separate artifact that must be verified independently.\n"
+            "- Break the requirement into individual sub-clauses and evaluate each one.\n"
+            "- A requirement with 5 sub-clauses where 4 are met is PARTIAL, not COMPLIANT.\n"
+            "- Identify specific gaps: which sub-clause is missing evidence?\n\n"
             "GUIDELINES FOR JUSTIFICATION:\n"
             "- Write a concise explanation in 2-3 natural sentences.\n"
             "- Start by describing what the requirement expects.\n"
@@ -92,24 +115,24 @@ class Tier3LLM:
             "- Never infer unsupported functionality.\n"
             "- Avoid generic phrases ('analysis indicates', 'the product is compliant').\n"
             "- Do not repeat the verdict or confidence score.\n"
-            "- Vary your sentence structure naturally depending on the evidence. Use flexible wording like:\n"
-            "  * 'The requirement expects [X]. The documentation describes [Y], but does not explicitly demonstrate [Z].'\n"
-            "  * 'The documentation confirms [Y]. However, no explicit evidence was found for [Z].'\n"
-            "  * 'While the documentation covers [Y], additional evidence is needed to verify [Z].'\n"
-            "  * 'The documentation provides evidence of [Y].'\n\n"
+            "- Vary your sentence structure naturally depending on the evidence.\n\n"
             "Return exactly one valid JSON object with these keys:\n"
             "{\n"
             '  "concept_analysis": [\n'
-            '    {"concept": "mandatory concept from requirement", "status": "evidenced or missing", "excerpt": "relevant evidence snippet if found"}\n'
+            '    {"concept": "mandatory concept from requirement", "status": "evidenced, absent, or uncertain", "excerpt": "relevant evidence snippet if found"}\n'
             '  ],\n'
             '  "verdict": "COMPLIANT" or "PARTIAL" or "NON-COMPLIANT",\n'
+            '  "gaps": ["specific sub-clause or capability that lacks evidence"],\n'
             '  "extracted_evidence": ["short direct evidence statements copied or paraphrased from excerpts"],\n'
             '  "matched_concepts": ["requirement concepts that are evidenced"],\n'
-            '  "missing_concepts": ["requirement concepts that are not evidenced"],\n'
+            '  "missing_concepts": ["requirement concepts that are explicitly confirmed as absent or contradicted by evidence"],\n'
+            '  "uncertain_concepts": ["requirement concepts that are expected but neither confirmed nor contradicted (i.e. documentation is silent)"],\n'
             '  "justification": "Your 2-3 sentence explanation following the GUIDELINES FOR JUSTIFICATION, derived from your concept_analysis.",\n'
             '  "recommendation": "single next action for compliance officer"\n'
             "}\n"
-            "Do not include markdown or any extra text."
+            "Keep all arrays (extracted_evidence, matched_concepts, missing_concepts, uncertain_concepts, gaps) to a maximum of 5 concise items.\n"
+            "CRITICAL: Do not include markdown (like ```json), backticks, or any extra text outside the JSON object.\n"
+            "CRITICAL: Never use unescaped double quotes inside the string values. Use single quotes for inner quotes."
         )
 
     def _cache_key(self, prompt: str) -> str:
@@ -147,7 +170,8 @@ class Tier3LLM:
         requirement_title: str,
         requirement_text: str,
         evidence_chunks: List[Dict[str, Any]],
-        capability_ledger: Dict[str, Any] = None
+        capability_ledger: Dict[str, Any] = None,
+        expected_capabilities: List[str] = None
     ) -> Dict[str, Any]:
         if not self.requests:
             return {
@@ -171,7 +195,7 @@ class Tier3LLM:
                 "verdict_bool": False,
             }
 
-        prompt = self._build_gap_analysis_prompt(requirement_title, requirement_text, evidence_chunks, capability_ledger)
+        prompt = self._build_gap_analysis_prompt(requirement_title, requirement_text, evidence_chunks, capability_ledger, expected_capabilities)
         cache_key = self._cache_key(prompt)
         cached = self._read_cache(cache_key)
         if cached is not None:
@@ -185,11 +209,33 @@ class Tier3LLM:
             loop = asyncio.get_event_loop()
             async with OLLAMA_LOCK:
                 answer = await loop.run_in_executor(None, self._call_ollama_sync, prompt)
-            parsed = json.loads(answer)
+                
+            import re
+            match = re.search(r'\{.*\}', answer, re.DOTALL)
+            if match:
+                answer = match.group(0)
+            
+            try:
+                parsed = json.loads(answer)
+            except json.JSONDecodeError:
+                # Attempt to fix unescaped inner quotes by finding quotes that are not near structural characters
+                # This is a crude but often effective heuristic for small LLMs
+                fixed_answer = re.sub(r'(?<![\[\{\:,]\s)"(?![\s\}\],])', r"'", answer)
+                try:
+                    parsed = json.loads(fixed_answer)
+                except Exception:
+                    # Last resort: just extract verdict with regex
+                    logger.warning("Could not repair JSON. Falling back to regex extraction.")
+                    verdict_match = re.search(r'"verdict"\s*:\s*"([^"]+)"', answer, re.IGNORECASE)
+                    verdict = verdict_match.group(1).upper() if verdict_match else "ANALYSIS_FAILED"
+                    parsed = {
+                        "verdict": verdict,
+                        "justification": "Extracted via regex due to malformed JSON.",
+                    }
         except Exception as exc:
             logger.error("LLM call failed: %s", exc)
             parsed = {
-                "verdict": "PARTIAL",
+                "verdict": "ANALYSIS_FAILED",
                 "extracted_evidence": [],
                 "matched_concepts": [],
                 "missing_concepts": [],

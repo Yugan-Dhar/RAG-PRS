@@ -81,7 +81,14 @@ async def run_assessment_task(job_id: str, standard_id: str, framework_id: str, 
 
             embedder = BGEEmbedder()
             texts = [chunk["text"] for chunk in chunks]
-            embeddings = embedder.embed_documents(texts)
+            loop = asyncio.get_running_loop()
+            embeddings = await loop.run_in_executor(None, embedder.embed_documents, texts)
+
+            numeric_texts = [chunk.get("payload", {}).get("text", "") for chunk in numeric_chunks]
+            if numeric_texts:
+                numeric_embeddings = await loop.run_in_executor(None, embedder.embed_documents, numeric_texts)
+                for chunk, emb in zip(numeric_chunks, numeric_embeddings):
+                    chunk["vector"] = emb
 
             async with INDEX_UPDATE_LOCK:
                 orchestrator, dense_idx, sparse_idx = get_orchestrator()
