@@ -10,13 +10,37 @@ The system is separated into two decoupled components:
 
 ## 1. Prerequisites
 
+You have two choices for running the system:
+**Option A: Using Docker (Recommended for cross-platform ease)**
+- **Docker & Docker Compose** installed on your system.
+
+**Option B: Manual Setup**
 - **Python 3.10+**
-- **Node.js 18+** (for running the frontend)
-- **API Keys**: You will need an API key for the LLM inference. We recommend Cerebras for maximum speed.
+- **Node.js 18+**
+
+**API Keys**: You will need an API key for the LLM inference. We recommend Cerebras for maximum speed.
 
 ---
 
-## 2. Backend Setup & Running
+## 2. Docker Setup (Recommended)
+
+To run the entire system (backend and frontend) automatically in isolated containers:
+
+1. Create a `.env` file in the root project directory (where `docker-compose.yml` is) and add your keys:
+   ```env
+   CEREBRAS_API_KEY=your_cerebras_api_key_here
+   LIMIT_REQUIREMENTS=2.5,2.6
+   ```
+2. Run the system:
+   ```bash
+   docker-compose up --build
+   ```
+3. Wait for the build to finish. Once running, access the UI at [http://localhost:5173](http://localhost:5173).
+4. To stop the system, press `CTRL+C` and run `docker-compose down`.
+
+---
+
+## 3. Manual Backend Setup & Running
 
 The backend is built using FastAPI and runs on port `8000`.
 
@@ -57,7 +81,7 @@ The backend API will be available at [http://127.0.0.1:8000/docs](http://127.0.0
 
 ---
 
-## 3. Frontend Setup & Running
+## 4. Manual Frontend Setup & Running
 
 The frontend is a React application built with Vite, defaulting to port `5173`.
 
@@ -81,7 +105,7 @@ The frontend will be available at [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## 4. How to Use the System
+## 5. How to Use the System
 
 1. **Ensure both servers are running** (Backend on `8000`, Frontend on `5173`).
 2. Open your browser and navigate to `http://localhost:5173`.
@@ -92,7 +116,7 @@ The frontend will be available at [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## 5. Troubleshooting / Common Issues
+## 6. Troubleshooting / Common Issues
 
 - **DNS / Corporate VPN Blocks (Cerebras)**: If you are behind a corporate proxy (like Cisco Umbrella) that causes `getaddrinfo failed` or intercepts connections, the backend (`app/analysis/tier3_llm.py`) has a built-in DNS bypass patch for `api.cerebras.ai`. 
 - **CORS Errors**: The backend is configured to allow origins `http://localhost:5173` and `http://127.0.0.1:5173`. Ensure your frontend is running on one of those ports.

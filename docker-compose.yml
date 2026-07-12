@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # These will be read from the host machine's environment or .env file at the root
+      - CEREBRAS_API_KEY=${CEREBRAS_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - LIMIT_REQUIREMENTS=${LIMIT_REQUIREMENTS:-2.5,2.6}
+    volumes:
+      # Optional: bind mount DB files if you want persistence across container restarts
+      # - ./backend/app.db:/app/app.db
+      - ./backend/.rag_store:/app/.rag_store
+
+  frontend:
+    build:
+      context: ./frontend-react
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
+    depends_on:
+      - backend
