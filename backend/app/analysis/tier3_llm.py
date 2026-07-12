@@ -5,9 +5,27 @@ import json
 import hashlib
 import os
 from pathlib import Path
+import urllib3
+from dotenv import load_dotenv
+import socket
+
+load_dotenv()
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Override DNS resolution for api.cerebras.ai to bypass local corporate DNS/VPN issues
+# while preserving the proper hostname for Host header and SNI
+_original_getaddrinfo = socket.getaddrinfo
+def _custom_getaddrinfo(*args, **kwargs):
+    if args and args[0] == 'api.cerebras.ai':
+        # Return Cloudflare's IP address for Cerebras
+        port = args[1] if len(args) > 1 else 443
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, '', ('104.18.11.146', port))]
+    return _original_getaddrinfo(*args, **kwargs)
+socket.getaddrinfo = _custom_getaddrinfo
 
 logger = logging.getLogger(__name__)
 
+GROQ_SEMAPHORE = None
 OLLAMA_LOCK = None
 
 
@@ -17,7 +35,7 @@ class Tier3LLM:
     The orchestrator treats this as one signal among several, not the sole judge.
     """
 
-    CACHE_VERSION = "v5"
+    CACHE_VERSION = "v7"
 
     def __init__(
         self,
@@ -26,7 +44,13 @@ class Tier3LLM:
         cache_dir: str | None = None,
     ):
         self.host = host
-        self.model = model
+        if os.environ.get("CEREBRAS_API_KEY"):
+            self.model = "gpt-oss-120b"
+        elif os.environ.get("GROQ_API_KEY"):
+            self.model = "llama-3.1-8b-instant"
+        else:
+            self.model = model
+            
         self.options = {"temperature": 0.0, "num_predict": 800, "num_ctx": 4096}
         default_cache_dir = Path(__file__).resolve().parents[2] / ".rag_store" / "llm_cache"
         self.cache_dir = Path(cache_dir) if cache_dir else default_cache_dir
@@ -37,20 +61,115 @@ class Tier3LLM:
         except ImportError:
             self.requests = None
 
-    def _call_ollama_sync(self, prompt: str) -> str:
-        response = self.requests.post(
-            f"{self.host}/api/generate",
-            json={
-                "model": self.model,
-                "prompt": prompt,
+    def _call_llm_sync(self, prompt: str) -> str:
+        """Synchronous network call to LLM, intended to be wrapped in run_in_executor"""
+        import time
+        import re
+        max_retries = 15
+        
+        cerebras_api_key = os.environ.get("CEREBRAS_API_KEY")
+        groq_api_key = os.environ.get("GROQ_API_KEY")
+        
+        if cerebras_api_key:
+            # Use Cerebras (Free 70B, blazing fast)
+            url = "https://api.cerebras.ai/v1/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {cerebras_api_key}",
+                "Content-Type": "application/json"
+            }
+            json_payload = {
+                "model": "gpt-oss-120b",
+                "messages": [
+                    {"role": "system", "content": "You are a stringent cybersecurity auditor."},
+                    {"role": "user", "content": prompt}
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.0
+            }
+        elif groq_api_key:
+            url = "https://api.groq.com/openai/v1/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {groq_api_key}",
+                "Content-Type": "application/json"
+            }
+            json_payload = {
+                "model": "llama-3.1-8b-instant",
+                "messages": [
+                    {"role": "system", "content": "You are a stringent cybersecurity auditor."},
+                    {"role": "user", "content": prompt}
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.0
+            }
+        else:
+            url = "http://localhost:11434/api/chat"
+            headers = {"Content-Type": "application/json"}
+            json_payload = {
+                "model": "phi3.5:mini",
+                "messages": [
+                    {"role": "system", "content": "You are a stringent cybersecurity auditor."},
+                    {"role": "user", "content": prompt}
+                ],
                 "stream": False,
                 "format": "json",
-                "options": self.options,
-            },
-            timeout=600,
-        )
-        response.raise_for_status()
-        return response.json().get("response", "").strip()
+                "options": {
+                    "temperature": 0.0,
+                    "num_ctx": 4096
+                }
+            }
+
+        for attempt in range(max_retries):
+            try:
+                response = self.requests.post(
+                    url,
+                    headers=headers,
+                    json=json_payload,
+                    timeout=60,
+                    verify=False
+                )
+                if response.status_code == 429:
+                    sleep_time = float(response.headers.get("retry-after", 0.0))
+                    msg = ""
+                    if sleep_time == 0.0:
+                        try:
+                            error_json = response.json()
+                            msg = error_json.get("error", {}).get("message", "")
+                            # Match formats like "try again in 7m12s" or "try again in 4.5s"
+                            match = re.search(r"try again in (?:(\d+)m)?(\d+\.?\d*)s", msg)
+                            if match:
+                                minutes = float(match.group(1)) if match.group(1) else 0.0
+                                seconds = float(match.group(2))
+                                sleep_time = minutes * 60 + seconds
+                            else:
+                                sleep_time = 10.0
+                        except Exception:
+                            sleep_time = 10.0
+                            
+                    print(f"API rate limit hit (429). Requested sleep: {sleep_time} seconds. Msg: {msg}")
+                    logger.warning(f"API rate limit hit (429). Sleeping for {sleep_time} seconds before retry.")
+                    
+                    if sleep_time > 120:
+                        print(f"Sleep time {sleep_time}s is too long. Failing fast.")
+                        raise Exception(f"API Rate Limit exceeded. Requires {sleep_time}s cooldown.")
+                        
+                    time.sleep(sleep_time)
+                    continue
+                
+                response.raise_for_status()
+                
+                if cerebras_api_key or groq_api_key:
+                    return response.json()["choices"][0]["message"]["content"].strip()
+                else:
+                    return response.json().get("message", {}).get("content", "").strip()
+            except Exception as e:
+                # If we get connection errors, wait and retry
+                print(f"Network error in LLM call: {e}")
+                if attempt == max_retries - 1:
+                    raise
+                time.sleep(5.0)
+                continue
+                
+        raise Exception("API rate limit exceeded after maximum retries.")
 
     def _build_gap_analysis_prompt(
         self,
@@ -61,11 +180,11 @@ class Tier3LLM:
         expected_capabilities: List[str] = None
     ) -> str:
         context_parts = []
-        for i, chunk in enumerate(evidence_chunks[:5]):
+        for i, chunk in enumerate(evidence_chunks[:8]):
             text = chunk.get("payload", {}).get("text", "").strip()
             chunk_id = chunk.get("id", f"excerpt-{i + 1}")
             if text:
-                context_parts.append(f"[{chunk_id}] {text[:500]}")
+                context_parts.append(f"[{chunk_id}] {text[:2000]}")
         context = "\n\n".join(context_parts) if context_parts else "No relevant excerpts found."
 
         ledger_section = ""
@@ -95,24 +214,26 @@ class Tier3LLM:
             f"EVIDENCE EXCERPTS:\n{context}\n\n"
             f"{ledger_section}"
             "VERDICT GUIDELINES:\n"
-            "- COMPLIANT: ALL sub-clauses of the requirement are fully satisfied by evidence.\n"
-            "- PARTIAL: The evidence satisfies SOME sub-clauses but NOT ALL. Even if most are covered, "
-            "use PARTIAL if any sub-clause lacks evidence or has a gap. List the specific gaps.\n"
-            "- NON-COMPLIANT: The evidence contradicts the requirement or no sub-clause is satisfied.\n\n"
+            "- COMPLIANT: The evidence demonstrates the intent and capability required by the requirement. "
+            "Evidence does NOT need to use the exact same words as the standard — if the documented features "
+            "functionally satisfy the requirement through equivalent mechanisms, this is COMPLIANT. "
+            "Minor phrasing differences or implicit capabilities that logically follow from the evidence are acceptable.\n"
+            "- PARTIAL: The evidence covers some sub-clauses but key capabilities are genuinely missing, "
+            "contradicted, or the evidence only addresses a subset of what is required. List the specific gaps.\n"
+            "- NON-COMPLIANT: The evidence contradicts the requirement, or no relevant evidence exists for ANY sub-clause.\n\n"
             "CRITICAL RULES:\n"
-            "- If your justification mentions ANY missing evidence, lack of information, or gaps, you MUST return PARTIAL or NON-COMPLIANT, never COMPLIANT.\n"
-            "- If the requirement mentions an OEM undertaking or self-declaration, still assess the "
-            "product-testable parts of the requirement against the evidence. Note that the undertaking "
-            "is a separate artifact that must be verified independently.\n"
+            "- If the requirement mentions an OEM undertaking or self-declaration, treat that as a procedural/administrative "
+            "artifact to be verified separately. Focus your assessment on the product-testable technical parts. "
+            "Do NOT mark as PARTIAL solely because an undertaking document is not present in the excerpts.\n"
             "- Break the requirement into individual sub-clauses and evaluate each one.\n"
-            "- A requirement with 5 sub-clauses where 4 are met is PARTIAL, not COMPLIANT.\n"
-            "- Identify specific gaps: which sub-clause is missing evidence?\n\n"
+            "- Use COMPLIANT when the evidence functionally addresses the requirement, even if not verbatim.\n"
+            "- Use PARTIAL only for genuine, material gaps — not for minor phrasing differences.\n"
+            "- Use NON-COMPLIANT only when the evidence clearly contradicts or is completely silent.\n\n"
             "GUIDELINES FOR JUSTIFICATION:\n"
             "- Write a concise explanation in 2-3 natural sentences.\n"
             "- Start by describing what the requirement expects.\n"
-            "- Summarize only the capabilities explicitly supported by the evidence.\n"
-            "- Identify any required capability not demonstrated.\n"
-            "- Never infer unsupported functionality.\n"
+            "- Summarize the capabilities supported by the evidence, including reasonable inferences.\n"
+            "- Identify any required capability genuinely not demonstrated.\n"
             "- Avoid generic phrases ('analysis indicates', 'the product is compliant').\n"
             "- Do not repeat the verdict or confidence score.\n"
             "- Vary your sentence structure naturally depending on the evidence.\n\n"
@@ -122,9 +243,9 @@ class Tier3LLM:
             '    {"concept": "mandatory concept from requirement", "status": "evidenced, absent, or uncertain", "excerpt": "relevant evidence snippet if found"}\n'
             '  ],\n'
             '  "verdict": "COMPLIANT" or "PARTIAL" or "NON-COMPLIANT",\n'
-            '  "gaps": ["specific sub-clause or capability that lacks evidence"],\n'
+            '  "gaps": ["specific sub-clause or capability that genuinely lacks evidence"],\n'
             '  "extracted_evidence": ["short direct evidence statements copied or paraphrased from excerpts"],\n'
-            '  "matched_concepts": ["requirement concepts that are evidenced"],\n'
+            '  "matched_concepts": ["requirement concepts that are evidenced or functionally satisfied"],\n'
             '  "missing_concepts": ["requirement concepts that are explicitly confirmed as absent or contradicted by evidence"],\n'
             '  "uncertain_concepts": ["requirement concepts that are expected but neither confirmed nor contradicted (i.e. documentation is silent)"],\n'
             '  "justification": "Your 2-3 sentence explanation following the GUIDELINES FOR JUSTIFICATION, derived from your concept_analysis.",\n'
@@ -202,13 +323,26 @@ class Tier3LLM:
             return cached
 
         try:
-            global OLLAMA_LOCK
-            if OLLAMA_LOCK is None:
-                OLLAMA_LOCK = asyncio.Lock()
+            global GROQ_SEMAPHORE, OLLAMA_LOCK
+            cerebras_active = bool(os.environ.get("CEREBRAS_API_KEY"))
+            groq_active = bool(os.environ.get("GROQ_API_KEY"))
+            
+            if cerebras_active or groq_active:
+                # Cerebras and Groq have generous RPM but strict TPM on free tiers.
+                # Semaphore(3) helps smooth out sudden bursts.
+                if GROQ_SEMAPHORE is None:
+                    GROQ_SEMAPHORE = asyncio.Semaphore(3)
+                limiter = GROQ_SEMAPHORE
+            else:
+                # Local Ollama: serialize requests to avoid CPU contention
+                if OLLAMA_LOCK is None:
+                    OLLAMA_LOCK = asyncio.Lock()
+                limiter = OLLAMA_LOCK
                 
             loop = asyncio.get_event_loop()
-            async with OLLAMA_LOCK:
-                answer = await loop.run_in_executor(None, self._call_ollama_sync, prompt)
+            async with limiter:
+                # We pass the prompt, and determine which API to call inside _call_llm_sync
+                answer = await loop.run_in_executor(None, self._call_llm_sync, prompt)
                 
             import re
             match = re.search(r'\{.*\}', answer, re.DOTALL)
@@ -274,8 +408,11 @@ class Tier3LLM:
                     break
 
         parsed["verdict_bool"] = verdict_bool
-        try:
-            self._write_cache(cache_key, parsed)
-        except Exception as exc:
-            logger.warning("Failed to persist LLM cache entry: %s", exc)
+        
+        if verdict != "ANALYSIS_FAILED":
+            try:
+                self._write_cache(cache_key, parsed)
+            except Exception as exc:
+                logger.warning("Failed to persist LLM cache entry: %s", exc)
+                
         return parsed

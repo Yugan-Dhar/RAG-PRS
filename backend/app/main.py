@@ -25,7 +25,7 @@ app = FastAPI(title="PRS Compliance Intelligence API", version="1.0.0", lifespan
 from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,14 +39,7 @@ app.include_router(standards_router, prefix="/api/v1", tags=["Standards"])
 app.include_router(documents_router, prefix="/api/v1", tags=["Documents"])
 app.include_router(assessments_router, prefix="/api/v1", tags=["Assessments"])
 
-# Serve static frontend
-frontend_dir = os.path.join(os.path.dirname(__file__), "..", "..", "frontend")
-if os.path.exists(frontend_dir):
-    app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
-
-    @app.get("/")
-    async def serve_frontend():
-        return FileResponse(os.path.join(frontend_dir, "index.html"))
+# Removed static frontend serve
 
 
 @app.get("/health")

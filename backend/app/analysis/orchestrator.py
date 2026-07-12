@@ -8,7 +8,6 @@ from app.schemas.capability import CapabilityObject
 from app.analysis.tier1_semantic import Tier1Semantic
 from app.analysis.tier2_capability import Tier2Capability
 from app.analysis.evidence_quality import EvidenceQualityAssessor
-from app.analysis.negation_detector import NegationDetector
 from app.analysis.tier3_llm import Tier3LLM
 from app.analysis.grounding_verifier import GroundingVerifier
 from app.analysis.prohibition import ProhibitionAnalyser
@@ -25,8 +24,6 @@ class AssessmentOrchestrator:
     coverage, evidence quality, prohibition checks, LLM reasoning, and grounding.
     """
 
-    ECHO_OVERLAP_THRESHOLD = 0.55
-
     def __init__(self, retriever: HybridRetriever):
         self.retriever = retriever
         self.child_concurrency = max(1, int(os.getenv("ASSESSMENT_CHILD_CONCURRENCY", "3")))
@@ -35,7 +32,6 @@ class AssessmentOrchestrator:
         self.tier1 = Tier1Semantic(embedder=self.retriever.embedder)
         self.tier2 = Tier2Capability()
         self.quality = EvidenceQualityAssessor()
-        self.negation = NegationDetector()
         self.tier3 = Tier3LLM()
         self.grounding = GroundingVerifier()
         self.prohibition = ProhibitionAnalyser()
@@ -50,13 +46,6 @@ class AssessmentOrchestrator:
             terms = list(dict.fromkeys(expanded))
             return " ".join(([title] if title else []) + terms)
         return f"{title} {requirement.get('text', '')[:240]}".strip()
-
-    def _token_overlap(self, text_a: str, text_b: str) -> float:
-        tokens_a = set(text_a.lower().split())
-        tokens_b = set(text_b.lower().split())
-        if not tokens_a:
-            return 0.0
-        return len(tokens_a & tokens_b) / len(tokens_a)
 
     def _has_undertaking_component(self, requirement_text: str) -> bool:
         """Check if the requirement mentions an OEM undertaking/self-declaration component.
@@ -133,19 +122,17 @@ class AssessmentOrchestrator:
         if final_status in {"analysis_failed", "manual_review"}:
             return 0.0
             
-        llm_alignment = 1.0 if llm_status == final_status else 0.6 if llm_status in {"partial", "manual_review"} else 0.35
         score = (
-            0.30 * semantic_score
-            + 0.25 * capability_score
-            + 0.20 * evidence_quality_score
-            + 0.15 * grounding_score
-            + 0.10 * llm_alignment
+            0.15 * semantic_score
+            + 0.15 * capability_score
+            + 0.30 * evidence_quality_score
+            + 0.40 * grounding_score
         )
         
         if missing:
             score -= 0.05 * len(missing)
         if uncertain:
-            score -= 0.15 * len(uncertain)
+            score -= 0.10 * len(uncertain)
             
         return max(0.0, min(1.0, round(score, 3)))
 
@@ -157,127 +144,11 @@ class AssessmentOrchestrator:
                 evidence.append(text[:220] + ("..." if len(text) > 220 else ""))
         return evidence
 
-    def _build_consistent_summary(
-        self,
-        final_status: str,
-        matched_concepts: List[str],
-        missing_concepts: List[str],
-        evidence_chunks: List[Dict[str, Any]],
-        llm_result: Dict[str, Any],
-        prohibition_details: Dict[str, Any] | None,
-    ) -> str:
-        llm_summary = (llm_result.get("justification") or "").strip()
-        
-        if not llm_summary:
-            if final_status == "compliant":
-                llm_summary = "The documentation fully satisfies the baseline requirements."
-            elif final_status == "partial":
-                llm_summary = "The documentation demonstrates partial capability but contains critical implementation gaps."
-            elif final_status == "non_compliant":
-                llm_summary = "The product lacks demonstrable control coverage or exhibits prohibited behaviors."
-            else:
-                llm_summary = "Unable to verify compliance due to lack of evidence."
-
-        return llm_summary
-
-
-
-
-    def _enforce_status_consistency(
-        self,
-        final_status: str,
-        llm_status: str,
-        mandatory_concepts: List[str],
-        matched_concepts: List[str],
-        missing_concepts: List[str],
-        semantic_score: float,
-        capability_score: float,
-        evidence_quality_score: float,
-        evidence_chunks: List[Dict[str, Any]],
-        uncertain_concepts: List[str] = None,
-    ) -> tuple[str, List[str], List[str], List[str]]:
-        matched = list(dict.fromkeys([c for c in matched_concepts if c]))
-        missing = list(dict.fromkeys([c for c in missing_concepts if c]))
-        uncertain = list(dict.fromkeys([c for c in (uncertain_concepts or []) if c]))
-        mandatory = list(dict.fromkeys([c for c in mandatory_concepts if c]))
-
-        if final_status == "compliant":
-            unresolved_missing = [c for c in missing if c.lower() not in {m.lower() for m in matched}]
-            unresolved_uncertain = [c for c in uncertain if c.lower() not in {m.lower() for m in matched}]
-            
-            if unresolved_missing:
-                has_strong_evidence = semantic_score >= 0.7 and capability_score >= 0.9 and evidence_quality_score >= 0.8
-                if not has_strong_evidence or llm_status in {"partial", "non_compliant"}:
-                    final_status = "partial" if llm_status == "partial" else "non_compliant"
-                    missing = unresolved_missing
-            elif unresolved_uncertain:
-                final_status = "partial"
-                missing = unresolved_uncertain
-            # LLM verdict override: if LLM says partial/non_compliant but
-            # scores pushed us to compliant and no missing/uncertain were
-            # detected by the concept lists, still respect the LLM
-            elif llm_status in {"partial", "non_compliant"}:
-                final_status = "partial"
-                # Pull gaps from LLM result if available
-                missing = unresolved_uncertain or ["complete control coverage"]
-                
-            if final_status == "compliant":
-                missing = []
-                if mandatory:
-                    matched = list(dict.fromkeys(matched + mandatory))
-
-        elif final_status == "evidence_not_found":
-            if evidence_chunks and (semantic_score >= 0.35 or capability_score >= 0.35 or llm_status in {"compliant", "partial"}):
-                final_status = "partial"
-            else:
-                matched = []
-
-        elif final_status == "non_compliant":
-            if evidence_chunks and matched and not missing and llm_status == "compliant":
-                final_status = "partial"
-                missing = [c for c in mandatory if c.lower() not in {m.lower() for m in matched}] or ["full control coverage"]
-
-        if final_status == "partial":
-            if not matched and mandatory:
-                matched = [mandatory[0]] if semantic_score >= 0.35 or capability_score >= 0.35 else []
-            if not missing:
-                missing = [c for c in mandatory if c.lower() not in {m.lower() for m in matched}]
-            if not missing:
-                missing = ["complete control coverage"]
-
-        return final_status, matched, missing, uncertain
-
-
-    def _build_consistent_recommendation(
-        self,
-        final_status: str,
-        missing_concepts: List[str],
-        prohibition_details: Dict[str, Any] | None,
-        llm_result: Dict[str, Any],
-    ) -> str:
-        llm_recommendation = (llm_result.get("recommendation") or "").strip()
-        if final_status == "compliant":
-            return "Retain the cited evidence in the audit trail for this requirement."
-        if final_status == "partial":
-            if missing_concepts:
-                return f"Add explicit product evidence for: {', '.join(missing_concepts[:4])}."
-            return llm_recommendation or "Add stronger product evidence to close the remaining coverage gaps."
-        if final_status == "non_compliant":
-            if prohibition_details and prohibition_details.get("violations"):
-                return f"Remove, disable, or clearly exclude: {', '.join(prohibition_details['violations'][:4])}."
-            if missing_concepts:
-                return f"Provide implementation evidence or remediation for: {', '.join(missing_concepts[:4])}."
-            return llm_recommendation or "Remediate the missing control implementation and provide supporting evidence."
-        if final_status == "evidence_not_found":
-            return "Provide a security target, configuration guide, or test evidence that directly addresses this requirement."
-        return llm_recommendation or "Review this requirement manually."
-
     async def _assess_child(self, child: Dict[str, Any], numeric_chunks: List[Dict[str, Any]] = None, capability_ledger: Dict[str, Any] = None) -> AssessmentResultCreate:
         requirement_id = child.get("id", "Unknown")
         requirement_title = child.get("title", requirement_id)
         requirement_text = child.get("text", "")
 
-        # Flag undertaking component but do NOT short-circuit — run full analysis
         has_undertaking = self._has_undertaking_component(requirement_text)
 
         expected_capabilities = self.tier2.extractor.extract(requirement_text)
@@ -291,9 +162,7 @@ class AssessmentOrchestrator:
         reranked = self.reranker.rerank(semantic_query, candidate_chunks, top_k=8) if candidate_chunks else []
         evidence_chunks = reranked
 
-        # Inject numeric chunks if this requirement looks numeric
         if numeric_chunks:
-            # simple heuristic: if it has digits, it might be a numeric requirement
             import re
             import numpy as np
             if bool(re.search(r'\d', requirement_text)):
@@ -317,6 +186,7 @@ class AssessmentOrchestrator:
                 "summary": "No relevant evidence could be retrieved for this requirement.",
                 "recommendation": "Provide a security target, configuration guide, or test evidence that directly addresses this requirement.",
                 "decision_basis": "retrieval_empty",
+                "expected_capabilities": [cap.model_dump() for cap in expected_capabilities]
             }
             return AssessmentResultCreate(
                 requirement_id=requirement_id,
@@ -339,7 +209,10 @@ class AssessmentOrchestrator:
             capability_ledger=capability_ledger,
             expected_capabilities=[cap.concept for cap in expected_capabilities]
         )
+        
         llm_status = self._normalize_status(llm_result.get("verdict"))
+        final_status = llm_status
+        
         grounding_score = self.grounding.verify(llm_result.get("justification", ""), evidence_chunks)
 
         matched_concepts = list(dict.fromkeys(
@@ -348,62 +221,25 @@ class AssessmentOrchestrator:
         ))
         missing_concepts = list(dict.fromkeys(
             [str(c) for c in llm_result.get("missing_concepts", []) if c]
-            + [cap.concept for cap in missing_caps]
         ))
         uncertain_concepts = list(dict.fromkeys(
             [str(c) for c in llm_result.get("uncertain_concepts", []) if c]
         ))
-
-        # APPROACH D: Silent Fallback — DISABLED
-        # Previously this moved LLM-identified missing concepts to uncertain
-        # when there were no negative keywords in evidence. This erased real
-        # gaps and caused false-compliant results. Now the LLM's missing
-        # concepts are preserved as-is.
 
         prohibition_details = None
         if self._is_prohibition_requirement(child):
             prohibition_keywords = self._prohibition_keywords(child, expected_capabilities, mandatory_concepts)
             prohibition_ok, violations = self.prohibition.analyze(prohibition_keywords, evidence_chunks)
             prohibition_details = {"keywords": prohibition_keywords, "violations": violations}
-            if not evidence_chunks:
-                final_status = "evidence_not_found"
-            elif prohibition_ok:
-                final_status = "compliant"
-            else:
+            if not prohibition_ok:
                 final_status = "non_compliant"
                 missing_concepts = list(dict.fromkeys(missing_concepts + violations))
-        else:
-            if not evidence_chunks or semantic_quality["quality"] == "Low":
-                final_status = "evidence_not_found"
-            elif capability_score >= 0.80 and semantic_score >= 0.40 and grounding_score >= 0.40:
-                # High numeric scores suggest compliant, but LLM verdict
-                # has final say — if LLM found gaps, cap at partial
-                if llm_status in {"partial", "non_compliant"}:
-                    final_status = "partial"
-                else:
-                    final_status = "compliant"
-            elif capability_score >= 0.45 or semantic_score >= 0.28 or llm_status == "partial":
-                final_status = "partial"
-            elif llm_status == "compliant" and evidence_quality_score >= 0.75 and grounding_score >= 0.40:
-                final_status = "compliant"
-            else:
-                final_status = "non_compliant"
 
-        if llm_status == "analysis_failed":
-            final_status = "analysis_failed"
-        else:
-            final_status, matched_concepts, missing_concepts, uncertain_concepts = self._enforce_status_consistency(
-                final_status,
-                llm_status,
-                mandatory_concepts,
-                matched_concepts,
-                missing_concepts,
-                semantic_score,
-                capability_score,
-                evidence_quality_score,
-                evidence_chunks,
-                uncertain_concepts,
-            )
+        if final_status != "analysis_failed":
+            if not evidence_chunks:
+                final_status = "evidence_not_found"
+            elif grounding_score < 0.35:
+                final_status = "manual_review"
 
         confidence = self._calculate_confidence(
             semantic_score,
@@ -417,27 +253,36 @@ class AssessmentOrchestrator:
         )
 
         extracted_evidence = llm_result.get("extracted_evidence", []) or self._build_fallback_evidence(evidence_chunks)
-        summary = self._build_consistent_summary(
-            final_status,
-            matched_concepts,
-            missing_concepts,
-            evidence_chunks,
-            llm_result,
-            prohibition_details,
-        )
-        recommendation = self._build_consistent_recommendation(
-            final_status,
-            missing_concepts,
-            prohibition_details,
-            llm_result,
-        )
+        
+        summary = (llm_result.get("justification") or "").strip()
+        recommendation = (llm_result.get("recommendation") or "").strip()
+        
+        if not summary:
+             if final_status == "compliant":
+                 summary = "The documentation fully satisfies the baseline requirements."
+             elif final_status == "partial":
+                 summary = "The documentation demonstrates partial capability but contains critical implementation gaps."
+             elif final_status == "non_compliant":
+                 summary = "The product lacks demonstrable control coverage or exhibits prohibited behaviors."
+             else:
+                 summary = "Unable to verify compliance due to lack of evidence or reasoning."
+                 
+        if not recommendation:
+             if final_status == "compliant":
+                 recommendation = "Retain the cited evidence in the audit trail for this requirement."
+             elif final_status == "partial":
+                 recommendation = f"Add explicit product evidence for missing components."
+             elif final_status == "non_compliant":
+                 recommendation = "Remediate the missing control implementation and provide supporting evidence."
+             else:
+                 recommendation = "Review this requirement manually."
 
         payload = {
             "verdict": final_status.upper().replace("_", "-"),
             "justification": summary,
             "summary": summary,
             "recommendation": recommendation,
-            "decision_basis": "multi_signal_orchestrator",
+            "decision_basis": "llm_primary_with_guardrails",
             "scores": {
                 "semantic": round(semantic_score, 3),
                 "capability": round(capability_score, 3),
@@ -493,10 +338,20 @@ class AssessmentOrchestrator:
 
         if children:
             ordered_results = await asyncio.gather(
-                *(process_child(index, child) for index, child in enumerate(children))
+                *(process_child(index, child) for index, child in enumerate(children)),
+                return_exceptions=True
             )
-            ordered_results.sort(key=lambda item: item[0])
-            child_results = [result for _, result in ordered_results]
+            
+            valid_results = []
+            for item in ordered_results:
+                if isinstance(item, Exception):
+                    import logging
+                    logging.error("Child assessment failed: %s", item, exc_info=True)
+                else:
+                    valid_results.append(item)
+            
+            valid_results.sort(key=lambda item: item[0])
+            child_results = [result for _, result in valid_results]
 
         status_counts = {
             "compliant": 0,

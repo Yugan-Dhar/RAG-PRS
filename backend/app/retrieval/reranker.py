@@ -10,7 +10,7 @@ class Reranker:
         from app.ingestion.embedder import BGEEmbedder
         self.embedder = BGEEmbedder()
 
-    def rerank(self, query: str, chunks: List[Dict[str, Any]], top_k: int = 5, min_score: float = 0.30) -> List[Dict[str, Any]]:
+    def rerank(self, query: str, chunks: List[Dict[str, Any]], top_k: int = 5, min_score: float = 0.20) -> List[Dict[str, Any]]:
         """
         Rerank chunks by computing dense cosine similarity with the query.
         """
