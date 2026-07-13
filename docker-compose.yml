@@ -14,10 +14,13 @@ services:
       # - LIMIT_REQUIREMENTS=${LIMIT_REQUIREMENTS:-2.5,2.6}
       - HF_HUB_OFFLINE=1
     volumes:
+      # Map the backend source code for hot-reloading
+      - ./backend:/app
       # Optional: bind mount DB files if you want persistence across container restarts
       # - ./backend/app.db:/app/app.db
       - ./backend/.rag_store:/app/.rag_store
       - ~/.cache/huggingface:/root/.cache/huggingface
+    command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
     build:
@@ -29,3 +32,8 @@ services:
       - VITE_API_URL=http://localhost:8000/api/v1
     depends_on:
       - backend
+    volumes:
+      # Map the frontend source code for hot-reloading
+      - ./frontend-react:/app
+      # Prevent Windows node_modules from overriding the Linux ones in the container
+      - /app/node_modules
