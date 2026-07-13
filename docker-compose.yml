@@ -12,10 +12,12 @@ services:
       - CEREBRAS_API_KEY=${CEREBRAS_API_KEY:-}
       - GROQ_API_KEY=${GROQ_API_KEY:-}
       - LIMIT_REQUIREMENTS=${LIMIT_REQUIREMENTS:-2.5,2.6}
+      - HF_HUB_OFFLINE=1
     volumes:
       # Optional: bind mount DB files if you want persistence across container restarts
       # - ./backend/app.db:/app/app.db
       - ./backend/.rag_store:/app/.rag_store
+      - ~/.cache/huggingface:/root/.cache/huggingface
 
   frontend:
     build:
