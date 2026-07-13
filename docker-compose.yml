@@ -11,7 +11,7 @@ services:
       # These will be read from the host machine's environment or .env file at the root
       - CEREBRAS_API_KEY=${CEREBRAS_API_KEY:-}
       - GROQ_API_KEY=${GROQ_API_KEY:-}
-      - LIMIT_REQUIREMENTS=${LIMIT_REQUIREMENTS:-2.5,2.6}
+      # - LIMIT_REQUIREMENTS=${LIMIT_REQUIREMENTS:-2.5,2.6}
       - HF_HUB_OFFLINE=1
     volumes:
       # Optional: bind mount DB files if you want persistence across container restarts
